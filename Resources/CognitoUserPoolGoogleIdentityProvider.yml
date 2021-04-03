@@ -1,0 +1,13 @@
+Type: AWS::Cognito::UserPoolIdentityProvider
+Properties:
+  ProviderName: Google
+  AttributeMapping:
+    email: email
+    name: name
+  ProviderDetails: 
+    client_id: "802573727701-55rfnsc5tk4gu8baa406kb21daaatgaq.apps.googleusercontent.com"
+    client_secret: "qx4ARgfTkO8haHLFKyxAMm0M"
+    authorize_scopes: email openid profile
+  ProviderType: Google
+  UserPoolId:
+    Ref: CognitoUserPool

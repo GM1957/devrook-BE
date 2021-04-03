@@ -1,0 +1,15 @@
+CallbackURLs:
+  dev: https://your-testing-domain.com
+  prod: https://your-production-domain.com
+LogoutURLs:
+  dev: https://your-testing-domain.com
+  prod: https://your-production-domain.com
+DefaultRedirectURI:
+  dev: https://your-testing-domain.com
+  prod: https://your-production-domain.com
+EMAILING_REGION:
+  dev: "us-east-1"
+  prod: "ap-south-1"
+REGION:
+  dev: "us-east-1"
+  prod: "ap-south-1"

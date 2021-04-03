@@ -1,0 +1,13 @@
+Type: AWS::Cognito::UserPoolIdentityProvider
+Properties:
+  ProviderName: Facebook
+  ProviderDetails:
+    client_id: "414262543321353"
+    client_secret: "7e188264c63c54adfade2fd37b71858d"
+    authorize_scopes: "public_profile,email"
+  ProviderType: "Facebook"
+  AttributeMapping:
+    email: email
+    name: name
+  UserPoolId:
+    Ref: CognitoUserPool

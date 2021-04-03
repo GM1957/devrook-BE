@@ -1,0 +1,36 @@
+statusCodes:
+  200:
+    pattern: '.*"statusCode":200,.*' # JSON response
+    template: '#set ($errorMessageObj = $util.parseJson($input.path("$.errorMessage"))){
+                                            "body" : "$errorMessageObj.body"
+                                            }' # JSON return object
+    headers:
+      Content-Type: "'application/json'"
+  400:
+    pattern: '.*"statusCode":400,.*' # JSON response
+    template: '#set ($errorMessageObj = $util.parseJson($input.path("$.errorMessage"))){
+                                            "body" : "$errorMessageObj.body"
+                                            }' # JSON return object
+    headers:
+      Content-Type: "'application/json'"
+  201:
+    pattern: '.*"statusCode":201,.*' # JSON response
+    template: '#set ($errorMessageObj = $util.parseJson($input.path("$.errorMessage"))){
+                                            "body" : "$errorMessageObj.body"
+                                            }' # JSON return object
+    headers:
+      Content-Type: "'application/json'"
+  204:
+    pattern: '.*"statusCode":204,.*' # JSON response
+    template: '#set ($errorMessageObj = $util.parseJson($input.path("$.errorMessage"))){
+                                            "body" : "$errorMessageObj.body"
+                                            }' # JSON return object
+    headers:
+      Content-Type: "'application/json'"
+  500:
+    pattern: '.*"statusCode":500,.*' # JSON response
+    template: '#set ($errorMessageObj = $util.parseJson($input.path("$.errorMessage"))){
+                                            "body" : "$errorMessageObj.body"
+                                            }' # JSON return object
+    headers:
+      Content-Type: "'application/json'"
