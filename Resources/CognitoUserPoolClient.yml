@@ -4,6 +4,8 @@ Properties:
   GenerateSecret: False
   SupportedIdentityProviders:
     - "COGNITO"
+  ExplicitAuthFlows:
+    - "ALLOW_USER_PASSWORD_AUTH"  
   AllowedOAuthFlowsUserPoolClient: true
   AllowedOAuthFlows:
     - "code"
