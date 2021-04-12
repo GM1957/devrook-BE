@@ -41,8 +41,7 @@ custom:
   s3MainBucket: "${self:service}-main-bucket"
 
 functions:
-  hello:
-    handler: handler.hello
+  Users: ${file(./Resources/LambdaResources/Users.yml)}
 
 resources:
   Resources:
@@ -59,6 +58,7 @@ resources:
     # >>>>>>>>>>--S3 BUCKETS--<<<<<<<<<<< #
     S3MainBucket: ${file(./Resources/S3MainBucket.yml)} 
     # >>>>>>>>>>--DYNAMO DB TABLES--<<<<<<<<<<< #
+    UsersTable: ${file(./Resources/DynamoResources/UsersTable.yml)}
 
   Outputs:
     CognitoUserPoolId:
