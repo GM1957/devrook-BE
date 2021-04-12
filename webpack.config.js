@@ -3,7 +3,7 @@ const path = require("path");
 
 const config = {
   entry: {
-    handler: "./handler.js"
+    Users: "./Users/index.js"
   },
   output: {
     filename: "[name]/index.js",

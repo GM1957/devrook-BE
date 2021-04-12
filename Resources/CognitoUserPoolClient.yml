@@ -6,6 +6,7 @@ Properties:
     - "COGNITO"
   ExplicitAuthFlows:
     - "ALLOW_USER_PASSWORD_AUTH"  
+    - "ALLOW_REFRESH_TOKEN_AUTH"
   AllowedOAuthFlowsUserPoolClient: true
   AllowedOAuthFlows:
     - "code"
