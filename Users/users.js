@@ -14,7 +14,7 @@ const {
   badRequestResponse
 } = require("../Utils/responseCodes").responseMessages;
 
-const { customValidator } = require("../Utils/common-validator");
+const { customValidator } = require("../Utils/customValidator");
 
 const { cognitoIdentityService } = require("../Utils/cognitoConnection.js");
 
