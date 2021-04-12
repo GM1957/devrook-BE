@@ -2,7 +2,7 @@ const {
   putItem,
   updateItem,
   deleteItem,
-  queryItem,
+  queryItem
 } = require("../Utils/DBClient");
 
 const {
@@ -11,7 +11,7 @@ const {
   okResponse,
   deleteResponse,
   internalServerError,
-  badRequestResponse,
+  badRequestResponse
 } = require("../Utils/responseCodes").responseMessages;
 
 const { customValidator } = require("../Utils/common-validator");
@@ -25,21 +25,21 @@ function updateCognito(userId) {
     UserAttributes: [
       {
         Name: "profile",
-        Value: "1",
-      },
+        Value: "1"
+      }
     ],
     UserPoolId: USER_POOL_ID,
-    Username: userId,
+    Username: userId
   };
 
   return cognitoIdentityService
     .adminUpdateUserAttributes(params)
     .promise()
-    .then((result) => {
+    .then(result => {
       console.log("result", result);
       return okResponse("user update sucessfully in cognito", result);
     })
-    .catch((err) => {
+    .catch(err => {
       console.log("error", err);
       return badRequestResponse(
         "unable to update the user in the cognito",
@@ -52,14 +52,14 @@ function deleteCognitoUser(userId) {
   return cognitoIdentityService
     .adminDeleteUser({
       UserPoolId: USER_POOL_ID,
-      Username: userId,
+      Username: userId
     })
     .promise()
-    .then((result) => {
+    .then(result => {
       console.log("result", result);
       return okResponse("user deleted successfully from the cognito", result);
     })
-    .catch((err) => {
+    .catch(err => {
       console.log("error", err);
       return badRequestResponse("unable to delete cognito user", err);
     });
@@ -81,16 +81,16 @@ function getUserByUserName(event) {
     IndexName: "byUserName",
     KeyConditionExpression: "userName = :userName",
     ExpressionAttributeValues: {
-      ":userName": userName,
-    },
+      ":userName": userName
+    }
   };
 
   return queryItem(params)
-    .then((result) => {
+    .then(result => {
       delete result.userId;
       return okResponse("fetched result", result);
     })
-    .catch((err) => internalServerError(err));
+    .catch(err => internalServerError(err));
 }
 
 // it will use when user seeing his own profile
@@ -108,13 +108,13 @@ function getUserByUserId(event) {
     TableName: "UsersTable",
     KeyConditionExpression: "userId = :userId",
     ExpressionAttributeValues: {
-      ":userId": userId,
-    },
+      ":userId": userId
+    }
   };
 
   return queryItem(params)
-    .then((result) => okResponse("fetched result", result))
-    .catch((err) => internalServerError(err));
+    .then(result => okResponse("fetched result", result))
+    .catch(err => internalServerError(err));
 }
 
 async function createUser(event) {
@@ -124,7 +124,7 @@ async function createUser(event) {
     "userId",
     "email",
     "name",
-    "userName",
+    "userName"
   ]);
 
   if (errors.length)
@@ -140,7 +140,7 @@ async function createUser(event) {
     profession,
     linkedinLink,
     githubLink,
-    twitterLink,
+    twitterLink
   } = event;
 
   const userNameValidationResult = await getUserByUserName(userName);
@@ -163,8 +163,8 @@ async function createUser(event) {
       linkedinLink: linkedinLink ? linkedinLink : "",
       githubLink: githubLink ? githubLink : "",
       twitterLink: twitterLink ? twitterLink : "",
-      createdAt: new Date(Date.now()).toISOString(),
-    },
+      createdAt: new Date(Date.now()).toISOString()
+    }
   };
 
   return putItem(params)
@@ -175,7 +175,7 @@ async function createUser(event) {
         params
       );
     })
-    .catch((err) =>
+    .catch(err =>
       internalServerError(
         err,
         `unable to create user with the email address ${email} and username ${userName}`
@@ -213,18 +213,18 @@ function updateUser(event) {
   const params = {
     TableName: "UsersTable",
     Key: {
-      userId: userId,
+      userId: userId
     },
     UpdateExpression: updateExpression,
     ExpressionAttributeNames: ExpressionAttributeNames,
-    ExpressionAttributeValues: ExpressionAttributeValues,
+    ExpressionAttributeValues: ExpressionAttributeValues
   };
 
   return updateItem(params)
     .then(() =>
       updateResponse(`user updated successfully with userId ${userId}`, params)
     )
-    .catch((err) =>
+    .catch(err =>
       internalServerError(`Error to update the user ${err}`, params)
     );
 }
@@ -242,8 +242,8 @@ function deleteUser(event) {
   const userParams = {
     TableName: "AccountsLedgerTable",
     Key: {
-      userId,
-    },
+      userId
+    }
   };
 
   return deleteItem(userParams)
@@ -254,7 +254,7 @@ function deleteUser(event) {
         userParams
       );
     })
-    .catch((err) =>
+    .catch(err =>
       internalServerError(`unable to delete the user ${err}`, userParams)
     );
 }
@@ -264,5 +264,5 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserByUserName,
-  getUserByUserId,
+  getUserByUserId
 };

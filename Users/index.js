@@ -3,14 +3,14 @@ const {
   updateUser,
   deleteUser,
   getUserByUserName,
-  getUserByUserId,
+  getUserByUserId
 } = require("./users");
 
 const {
-  badRequestResponse,
+  badRequestResponse
 } = require("../Utils/responseCodes").responseMessages;
 
-exports.main = async (event) => {
+exports.main = async event => {
   console.log("Input to the lambda", event);
 
   const { action } = event;
@@ -20,7 +20,7 @@ exports.main = async (event) => {
     const { details } = event;
     event = {
       ...event,
-      ...details,
+      ...details
     };
     delete event.details;
 
@@ -30,7 +30,7 @@ exports.main = async (event) => {
 
     event = {
       ...event,
-      ...details,
+      ...details
     };
     delete event.details;
 
@@ -42,7 +42,7 @@ exports.main = async (event) => {
 
     event = {
       ...event,
-      ...details,
+      ...details
     };
     delete event.details;
 

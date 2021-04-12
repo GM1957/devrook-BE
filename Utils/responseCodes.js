@@ -2,18 +2,18 @@ const okResponse = (message = "success", data = "") => ({
   status: true,
   statusCode: 200,
   data: data,
-  message: message,
+  message: message
 });
 
 const internalServerError = (error = [], message = "Internal server error") => {
-  if (error instanceof Array) error.forEach((e) => console.error(message, e));
+  if (error instanceof Array) error.forEach(e => console.error(message, e));
   else console.error(message, error);
 
   return {
     status: false,
     statusCode: 500,
     message: message,
-    error,
+    error
   };
 };
 
@@ -24,7 +24,7 @@ const resourceNotFound = (
   status: false,
   statusCode: 404,
   data: data,
-  message: message,
+  message: message
 });
 
 const createResponse = (
@@ -34,35 +34,35 @@ const createResponse = (
   status: true,
   statusCode: 201,
   data: data,
-  message: message,
+  message: message
 });
 
 const updateResponse = (message = "Update successful", data = "") => ({
   status: true,
   statusCode: 200,
   data: data,
-  message: message,
+  message: message
 });
 
 const deleteResponse = (message = "Deleted successfully", data = "") => ({
   status: true,
   statusCode: 204,
   data: data,
-  message: message,
+  message: message
 });
 
 const badRequestResponse = (message = "BadRequestResponse", data = "") => ({
   status: false,
   statusCode: 400,
   data: data,
-  message: message,
+  message: message
 });
 
 const forbiddenResponse = (message = "Access denied", data = "") => ({
   status: false,
   statusCode: 403,
   data: data,
-  message: message,
+  message: message
 });
 
 module.exports.responseMessages = {
@@ -73,5 +73,5 @@ module.exports.responseMessages = {
   updateResponse,
   deleteResponse,
   badRequestResponse,
-  forbiddenResponse,
+  forbiddenResponse
 };
