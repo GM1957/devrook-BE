@@ -1,0 +1,9 @@
+{
+  "action": "update",
+  "userId": "testUserId",
+  "bio": "yes bio",
+  "location": "INDIA",
+  "githubLink": "GM1957",
+  "profession": "SDE-1",
+  "twitterLink": "GM1957"
+}

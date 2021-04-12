@@ -143,7 +143,7 @@ async function createUser(event) {
     twitterLink
   } = event;
 
-  const userNameValidationResult = await getUserByUserName(userName);
+  const userNameValidationResult = await getUserByUserName(event);
 
   if (userNameValidationResult.data.length)
     return badRequestResponse(
@@ -171,8 +171,7 @@ async function createUser(event) {
     .then(async () => {
       await updateCognito(userId);
       return createResponse(
-        `user created successfully with userId ${userId}`,
-        params
+        `user created successfully with userId ${userId} and email address ${email}`
       );
     })
     .catch(err =>
@@ -222,11 +221,9 @@ function updateUser(event) {
 
   return updateItem(params)
     .then(() =>
-      updateResponse(`user updated successfully with userId ${userId}`, params)
+      updateResponse(`user updated successfully with userId ${userId}`)
     )
-    .catch(err =>
-      internalServerError(`Error to update the user ${err}`, params)
-    );
+    .catch(err => internalServerError(err, `Error to update the user`));
 }
 
 function deleteUser(event) {
@@ -240,7 +237,7 @@ function deleteUser(event) {
   const { userId } = event;
 
   const userParams = {
-    TableName: "AccountsLedgerTable",
+    TableName: "UsersTable",
     Key: {
       userId
     }
@@ -248,14 +245,14 @@ function deleteUser(event) {
 
   return deleteItem(userParams)
     .then(async () => {
-      await deleteCognitoUser(event.useId);
-      return deleteResponse(
-        `user deactivated successfully with userId ${event.userId}`,
-        userParams
-      );
+      await deleteCognitoUser(userId);
+      return deleteResponse(`user deleted successfully with userId ${userId}`);
     })
     .catch(err =>
-      internalServerError(`unable to delete the user ${err}`, userParams)
+      internalServerError(
+        err,
+        `unable to delete the user with userId ${userId}`
+      )
     );
 }
 

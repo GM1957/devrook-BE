@@ -1,0 +1,12 @@
+{
+  "action": "create",
+  "userId": "testUserId",
+  "email": "test@test.com",
+  "userName": "testUserName",
+  "name": "testName",
+  "bio": "no bio",
+  "location": "IN",
+  "githubLink": "gm1957",
+  "profession": "SDE",
+  "twitterLink": "gm1957"
+}
