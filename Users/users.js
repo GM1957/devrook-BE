@@ -163,7 +163,8 @@ async function createUser(event) {
       linkedinLink: linkedinLink ? linkedinLink : "",
       githubLink: githubLink ? githubLink : "",
       twitterLink: twitterLink ? twitterLink : "",
-      createdAt: new Date(Date.now()).toISOString()
+      createdAt: new Date(Date.now()).toISOString(),
+      isDeactivated: "false"
     }
   };
 

@@ -21,7 +21,6 @@ plugins:
   - serverless-webpack
   - serverless-dotenv-plugin
   - serverless-offline
-  - serverless-plugin-split-stacks
 
 custom:
   userPoolName: "${self:service}-${self:provider.stage}"
@@ -31,17 +30,11 @@ custom:
     prod: "https://your-domain-name-here.com/"
     dev: "https://your-domain-name-here.com/"
 
-  splitStacks:
-    perFunction: false
-    perType: true
-    perGroupFunction: true
-    nestedStackCount: 20
-  ##this stack count never should change if changed have to deploy it from scratch again  
-
   s3MainBucket: "${self:service}-main-bucket"
 
 functions:
   Users: ${file(./Resources/LambdaResources/Users.yml)}
+  Tags: ${file(./Resources/LambdaResources/Tags.yml)}
 
 resources:
   Resources:
@@ -59,6 +52,8 @@ resources:
     S3MainBucket: ${file(./Resources/S3MainBucket.yml)} 
     # >>>>>>>>>>--DYNAMO DB TABLES--<<<<<<<<<<< #
     UsersTable: ${file(./Resources/DynamoResources/UsersTable.yml)}
+    TagsTable: ${file(./Resources/DynamoResources/TagsTable.yml)}
+    TagMappingTable: ${file(./Resources/DynamoResources/TagMappingTable.yml)}
 
   Outputs:
     CognitoUserPoolId:

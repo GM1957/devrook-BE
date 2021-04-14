@@ -1,0 +1,117 @@
+handler: Tags/index.main
+package:
+  individually: true
+  artifact: "./dist/Tags.zip"
+environment:
+  USER_POOL_ID:
+    Ref: CognitoUserPool
+name: Tags-${self:provider.stage}
+events:
+  - http:
+      path: /tag
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "create",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+  - http:
+      path: /tag/create-default
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "createDefaultTags",
+            "userId": "$context.authorizer.claims.sub"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+  - http:
+      path: /tag/{tag-name}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "getTag",
+            "tagName": "$input.params(''username'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+  - http:
+      path: /tag/popular/all
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "getPopularTags",
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+  - http:
+      path: /tag/follow
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "followTag",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+  - http:
+      path: /tag/unfollow
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "unFollowTag",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}

@@ -1,0 +1,23 @@
+Type: AWS::DynamoDB::Table
+Properties:
+  TableName: TagsTable
+  AttributeDefinitions:
+    - AttributeName: tagName
+      AttributeType: S
+    - AttributeName: popularity
+      AttributeType: N
+    - AttributeName: isDeactivated
+      AttributeType: S
+  KeySchema:
+    - AttributeName: tagName 
+      KeyType: HASH
+  GlobalSecondaryIndexes:
+    - IndexName: sortByPopularity
+      KeySchema:
+        - AttributeName: isDeactivated 
+          KeyType: HASH
+        - AttributeName: popularity
+          KeyType: RANGE
+      Projection:
+        ProjectionType: ALL    
+  BillingMode: PAY_PER_REQUEST    

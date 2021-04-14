@@ -3,7 +3,8 @@ const path = require("path");
 
 const config = {
   entry: {
-    Users: "./Users/index.js"
+    Users: "./Users/index.js",
+    Tags: "./Tags/index.js"
   },
   output: {
     filename: "[name]/index.js",

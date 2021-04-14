@@ -1,0 +1,230 @@
+[
+  {
+    "tagName": "swift",
+    "description": "Swift is a general-purpose, multi-paradigm, compiled programming language developed by Apple Inc. and the open-source community, first released in 2014."
+  },
+  {
+    "tagName": "rust",
+    "description": "Rust is a multi-paradigm programming language designed for performance and safety, especially safe concurrency. Rust is syntactically similar to C++, but can guarantee memory safety by using a borrow checker to validate references."
+  },
+  {
+    "tagName": "dotnet",
+    "description": "The .NET Framework is a software framework developed by Microsoft that runs primarily on Microsoft Windows. It includes a large class library called Framework Class Library and provides language interoperability across several programming languages."
+  },
+  {
+    "tagName": "deno",
+    "description": "deno.land. Deno is a runtime for JavaScript and TypeScript that is based on the V8 JavaScript engine and the Rust programming language. It was created by Ryan Dahl, original creator of Node. js, and is focused on productivity. It was announced by Dahl in 2018 during his talk ``10 Things I Regret About Node."
+  },
+  {
+    "tagName": "kubernetes",
+    "description": "Kubernetes is an open-source container-orchestration system for automating computer application deployment, scaling, and management. It was originally designed by Google and is now maintained by the Cloud Native Computing Foundation."
+  },
+  {
+    "tagName": "django",
+    "description": "Django is a Python-based free and open-source web framework that follows the model-template-views architectural pattern. It is maintained by the Django Software Foundation, an American independent organization established as a 501 non-profit."
+  },
+  {
+    "tagName": "sre",
+    "description": "Site reliability engineering is a discipline that incorporates aspects of software engineering and applies them to infrastructure and operations problems. The main goals are to create scalable and highly reliable software systems."
+  },
+  {
+    "tagName": "npm",
+    "description": "npm is a package manager for the JavaScript programming language. npm, Inc. is a subsidiary of GitHub, that provides hosting for software development and version control with the usage of Git. npm is the default package manager for the JavaScript runtime environment Node.js"
+  },
+  {
+    "tagName": "java",
+    "description": "Java is a class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible."
+  },
+  {
+    "tagName": "flutter",
+    "description": "Flutter is an open-source UI software development kit created by Google. It is used to develop applications for Android, iOS, Linux, Mac, Windows, Google Fuchsia, and the web from a single codebase. The first version of Flutter was known as codename Sky and ran on the Android operating system."
+  },
+  {
+    "tagName": "machinelearning",
+    "description": "Machine learning is the study of computer algorithms that improve automatically through experience and by the use of data. It is seen as a part of artificial intelligence."
+  },
+  {
+    "tagName": "scala",
+    "description": "Scala is a strong statically typed general-purpose programming language which supports both object-oriented programming and functional programming. Designed to be concise, many of Scala's design decisions are aimed to address criticisms of Java."
+  },
+  {
+    "tagName": "android",
+    "description": "Android is a mobile operating system based on a modified version of the Linux kernel and other open source software, designed primarily for touchscreen mobile devices such as smartphones and tablets."
+  },
+  {
+    "tagName": "blockchain",
+    "description": "Blockchain.com is a cryptocurrency blockchain explorer service, as well as a cryptocurrency wallet and a cryptocurrency exchange supporting Bitcoin, Bitcoin Cash, and Ethereum. They also provide Bitcoin data charts, stats, and market information."
+  },
+  {
+    "tagName": "clojure",
+    "description": "Clojure is a dynamic and functional dialect of the Lisp programming language on the Java platform. Like other Lisp dialects, Clojure treats code as data and has a Lisp macro system. The current development process is community-driven, overseen by Rich Hickey as its benevolent dictator for life."
+  },
+  {
+    "tagName": "vscode",
+    "description": "Visual Studio Code is a freeware source-code editor made by Microsoft for Windows, Linux and macOS. Features include support for debugging, syntax highlighting, intelligent code completion, snippets, code refactoring, and embedded Git."
+  },
+  {
+    "tagName": "a11y",
+    "description": "a11y is an abbreviation for accessibility that is more compact for the character limits on social media. ... No less, many technologists see a11y as a movement, and not just the simple act of making websites more accessible."
+  },
+  {
+    "tagName": "elm",
+    "description": "Elm is a domain-specific programming language for declaratively creating web browser-based graphical user interfaces. Elm is purely functional, and is developed with emphasis on usability, performance, and robustness."
+  },
+  {
+    "tagName": "webassembly",
+    "description": "WebAssembly is an open standard that defines a portable binary-code format for executable programs, and a corresponding textual assembly language, as well as interfaces for facilitating interactions between such programs and their host environment."
+  },
+  {
+    "tagName": "bash",
+    "description": "Bash is a Unix shell and command language written by Brian Fox for the GNU Project as a free software replacement for the Bourne shell. First released in 1989, it has been used as the default login shell for most Linux distributions. A version is also available for Windows 10 via the Windows Subsystem for Linux."
+  },
+  {
+    "tagName": "graphql",
+    "description": "GraphQL is an open-source data query and manipulation language for APIs, and a runtime for fulfilling queries with existing data. GraphQL was developed internally by Facebook in 2012 before being publicly released in 2015."
+  },
+  {
+    "tagName": "gamedev",
+    "description": "A video game developer is a software developer specializing in video game development – the process and related disciplines of creating video games"
+  },
+  {
+    "tagName": "kotlin",
+    "description": "Kotlin is a cross-platform, statically typed, general-purpose programming language with type inference. Kotlin is designed to interoperate fully with Java, and the JVM version of Kotlin's standard library depends on the Java Class Library, but type inference allows its syntax to be more concise."
+  },
+  {
+    "tagName": "ubuntu",
+    "description": "Ubuntu is a Linux distribution based on Debian and composed mostly of free and open-source software. Ubuntu is officially released in three editions: Desktop, Server, and Core for Internet of things devices and robots. All the editions can run on the computer alone, or in a virtual machine."
+  },
+  {
+    "tagName": "vue",
+    "description": "Vue.js is an open-source model–view–viewmodel front end JavaScript framework for building user interfaces and single-page applications. It was created by Evan You, and is maintained by him and the rest of the active core team members."
+  },
+  {
+    "tagName": "docker",
+    "description": "Docker is a set of platform as a service products that use OS-level virtualization to deliver software in packages called containers. Containers are isolated from one another and bundle their own software, libraries and configuration files; they can communicate with each other through well-defined channels."
+  },
+  {
+    "tagName": "javascript",
+    "description": "JavaScript, often abbreviated as JS, is a programming language that conforms to the ECMAScript specification. JavaScript is high-level, often just-in-time compiled, and multi-paradigm. It has curly-bracket syntax, dynamic typing, prototype-based object-orientation, and first-class functions."
+  },
+  {
+    "tagName": "productivity",
+    "description": "Productivity describes various measures of the efficiency of production. Often, a productivity measure is expressed as the ratio of an aggregate output to a single input or an aggregate input used in a production process, i.e. output per unit of input, typically over a specific period of time."
+  },
+  {
+    "tagName": "rails",
+    "description": "Rails is a software library that extends the Ruby programming language. David Heinemeier Hansson is its creator. ... Learning Rails means learning how to use the Rails conventions and its API. Rails combines the Ruby programming language with HTML, CSS, and JavaScript to create a web application that runs on a web server."
+  },
+  {
+    "tagName": "css",
+    "description": "Cascading Style Sheets is a style sheet language used for describing the presentation of a document written in a markup language such as HTML. CSS is a cornerstone technology of the World Wide Web, alongside HTML and JavaScript."
+  },
+  {
+    "tagName": "career",
+    "description": "The career is an individual's metaphorical journey through learning, work and other aspects of life. There are a number of ways to define career and the term is used in a variety of ways."
+  },
+  {
+    "tagName": "elixir",
+    "description": "Elixir is a functional, concurrent, general-purpose programming language that runs on the BEAM virtual machine used to implement the Erlang programming language. Elixir builds on top of Erlang and shares the same abstractions for building distributed, fault-tolerant applications."
+  },
+  {
+    "tagName": "angular",
+    "description": "Angular is a TypeScript-based open-source web application framework led by the Angular Team at Google and by a community of individuals and corporations. Angular is a complete rewrite from the same team that built AngularJS."
+  },
+  {
+    "tagName": "git",
+    "description": "Git is software for tracking changes in any set of files, usually used for coordinating work among programmers collaboratively developing source code during software development. Its goals include speed, data integrity, and support for distributed, non-linear workflows."
+  },
+  {
+    "tagName": "dart",
+    "description": "Dart is a programming language designed for client development, such as for the web and mobile apps. It is developed by Google and can also be used to build server and desktop applications. Dart is an object-oriented, class-based, garbage-collected language with C-style syntax."
+  },
+  {
+    "tagName": "ios",
+    "description": "iOS is a mobile operating system created and developed by Apple Inc."
+  },
+  {
+    "tagName": "cpp",
+    "description": "C++ is a general-purpose programming language created by Bjarne Stroustrup as an extension of the C programming language, or C with Classes."
+  },
+  {
+    "tagName": "laravel",
+    "description": "Laravel is a free, open-source PHP web framework, created by Taylor Otwell and intended for the development of web applications following the model–view–controller architectural pattern and based on Symfony."
+  },
+  {
+    "tagName": "webdev",
+    "description": "Web development is the building and maintenance of websites; it's the work that happens behind the scenes to make a website look great, work fast and perform well with a seamless user experience. Web developers, or 'devs', do this by using a variety of coding languages."
+  },
+  {
+    "tagName": "devops",
+    "description": "DevOps is a set of practices that combines software development and IT operations. It aims to shorten the systems development life cycle and provide continuous delivery with high software quality. DevOps is complementary with Agile software development; several DevOps aspects came from the Agile methodology."
+  },
+  {
+    "tagName": "linux",
+    "description": "Linux is a family of open-source Unix-like operating systems based on the Linux kernel, an operating system kernel first released on September 17, 1991, by Linus Torvalds. Linux is typically packaged in a Linux distribution."
+  },
+  {
+    "tagName": "sql",
+    "description": "SQL is a domain-specific language used in programming and designed for managing data held in a relational database management system, or for stream processing in a relational data stream management system."
+  },
+  {
+    "tagName": "ruby",
+    "description": "Ruby is an interpreted, high-level, general-purpose programming language. It was designed and developed in the mid-1990s by Yukihiro Matz Matsumoto in Japan. Ruby is dynamically typed and uses garbage collection."
+  },
+  {
+    "tagName": "opensource",
+    "description": "Open-source software is a type of computer software in which source code is released under a license in which the copyright holder grants users the rights to use, study, change, and distribute the software to anyone and for any purpose. Open-source software may be developed in a collaborative public manner."
+  },
+  {
+    "tagName": "php",
+    "description": "PHP is a general-purpose scripting language especially suited to web development. It was originally created by Danish-Canadian programmer Rasmus Lerdorf in 1994. The PHP reference implementation is now produced by The PHP Group."
+  },
+  {
+    "tagName": "security",
+    "description": "Security is freedom from, or resilience against, potential harm caused by others. Beneficiaries of security may be of persons and social groups, objects and institutions, ecosystems or any other entity or phenomenon vulnerable to unwanted change."
+  },
+  {
+    "tagName": "typescript",
+    "description": "TypeScript is a programming language developed and maintained by Microsoft. It is a strict syntactical superset of JavaScript and adds optional static typing to the language. TypeScript is designed for the development of large applications and transcompiles to JavaScript."
+  },
+  {
+    "tagName": "csharp",
+    "description": "C# is a general-purpose, multi-paradigm programming language encompassing static typing, strong typing, lexically scoped, imperative, declarative, functional, generic, object-oriented, and component-oriented programming disciplines."
+  },
+  {
+    "tagName": "react",
+    "description": "React is an open-source, front end, JavaScript library for building user interfaces or UI components. It is maintained by Facebook and a community of individual developers and companies. React can be used as a base in the development of single-page or mobile applications."
+  },
+  {
+    "tagName": "aws",
+    "description": "Amazon Web Services is a subsidiary of Amazon providing on-demand cloud computing platforms and APIs to individuals, companies, and governments, on a metered pay-as-you-go basis."
+  },
+  {
+    "tagName": "azure",
+    "description": "Microsoft Azure, commonly referred to as Azure, is a cloud computing service created by Microsoft for building, testing, deploying, and managing applications and services through Microsoft-managed data centers."
+  },
+  {
+    "tagName": "powerplatform",
+    "description": "Microsoft Power Platform is a line of business intelligence, app development, and app connectivity software applications. Microsoft developed the Power Fx low-code programming language for expressing logic across the Power Platform. It also provides integrations with GitHub and Teams."
+  },
+  {
+    "tagName": "python",
+    "description": "Python is an interpreted, high-level and general-purpose programming language. Python's design philosophy emphasizes code readability with its notable use of significant indentation."
+  },
+  {
+    "tagName": "vim",
+    "description": "Vim is a clone, with additions, of Bill Joy's vi text editor program for Unix. Vim's author, Bram Moolenaar, based it on the source code for a port of the Stevie editor to the Amiga and released a version to the public in 1991."
+  },
+  {
+    "tagName": "go",
+    "description": "Go is a statically typed, compiled programming language designed at Google by Robert Griesemer, Rob Pike, and Ken Thompson. Go is syntactically similar to C, but with memory safety, garbage collection, structural typing, and CSP-style concurrency."
+  },
+  {
+    "tagName": "computerscience",
+    "description": "Computer science is the study of algorithmic processes, computational machines and computation itself. As a discipline, computer science spans a range of topics from theoretical studies of algorithms, computation and information to the practical issues of implementing computational systems in hardware and software."
+  },
+  {
+    "tagName": "beginners",
+    "description": ""
+  }
+]
