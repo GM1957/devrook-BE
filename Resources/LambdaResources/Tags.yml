@@ -70,7 +70,7 @@ events:
         passThrough: WHEN_NO_MATCH
         template:
           application/json: '{
-            "action": "getPopularTags",
+            "action": "getPopularTags"
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
   - http:
