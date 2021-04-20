@@ -6,6 +6,12 @@ Properties:
       AttributeType: S
     - AttributeName: userName
       AttributeType: S
+    - AttributeName: isDeactivated
+      AttributeType: S
+    - AttributeName: reputation
+      AttributeType: N
+    - AttributeName: followers
+      AttributeType: N
   KeySchema:
     - AttributeName: userId 
       KeyType: HASH
@@ -14,6 +20,22 @@ Properties:
       KeySchema:
         - AttributeName: userName
           KeyType: HASH
+      Projection:
+        ProjectionType: ALL    
+    - IndexName: sortByReputation
+      KeySchema:
+        - AttributeName: isDeactivated
+          KeyType: HASH
+        - AttributeName: reputation
+          KeyType: RANGE
+      Projection:
+        ProjectionType: ALL    
+    - IndexName: sortByFollowers
+      KeySchema:
+        - AttributeName: isDeactivated
+          KeyType: HASH
+        - AttributeName: followers
+          KeyType: RANGE
       Projection:
         ProjectionType: ALL    
   BillingMode: PAY_PER_REQUEST    

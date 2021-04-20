@@ -2,8 +2,14 @@ const {
   createUser,
   updateUser,
   deleteUser,
-  getUserByUserName,
-  getUserByUserId
+  getUserByUserNamePublicUse,
+  getUserByUserId,
+  topReputedUsers,
+  followUser,
+  followUserInBulk,
+  unFollowUser,
+  usersIFollow,
+  myFollowers
 } = require("./users");
 
 const {
@@ -38,17 +44,21 @@ exports.main = async event => {
   } else if (action === "delete") {
     return deleteUser(event);
   } else if (action === "getUserByUserName") {
+    return getUserByUserNamePublicUse(event);
+  } else if (action === "getUserByUserId") {
+    return getUserByUserId(event);
+  } else if (action === "topReputedUsers") {
+    return topReputedUsers(event);
+  } else if (action === "followUserInBulk") {
     const { details } = event;
 
     event = {
       ...event,
       ...details
     };
-    delete event.details;
 
-    return getUserByUserName(event);
-  } else if (action === "getUserByUserId") {
-    return getUserByUserId(event);
+    delete event.details;
+    return followUserInBulk(event);
   } else {
     return badRequestResponse(action);
   }

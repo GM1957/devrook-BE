@@ -1,7 +1,10 @@
 const {
   createTag,
   getTag,
+  increaseTagPopularity,
+  decreaseTagPopularity,
   followTag,
+  followTagInBulk,
   unFollowTag,
   createDefaultTags,
   getPopularTags
@@ -32,7 +35,7 @@ exports.main = async event => {
   } else if (action === "getTag") {
     return getTag(event);
   } else if (action === "getPopularTags") {
-    return getPopularTags();
+    return getPopularTags(event);
   } else if (action === "followTag") {
     const { details } = event;
 
@@ -44,6 +47,17 @@ exports.main = async event => {
     delete event.details;
 
     return followTag(event);
+  } else if (action === "followTagInBulk") {
+    const { details } = event;
+
+    event = {
+      ...event,
+      ...details
+    };
+
+    delete event.details;
+
+    return followTagInBulk(event);
   } else if (action === "unFollowTag") {
     const { details } = event;
 
@@ -55,6 +69,8 @@ exports.main = async event => {
     delete event.details;
 
     return unFollowTag(event);
+  } else if (action === "increaseTagPopularity") {
+    return increaseTagPopularity(event.tagName);
   } else {
     return badRequestResponse(action);
   }

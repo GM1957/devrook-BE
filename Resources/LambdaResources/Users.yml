@@ -28,6 +28,7 @@ events:
             "details": $input.json("$")
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
+
   - http:
       path: /user
       method: PUT
@@ -49,6 +50,7 @@ events:
             "details": $input.json("$")
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
+
   - http:
       path: /user
       method: DELETE
@@ -86,6 +88,7 @@ events:
         passThrough: WHEN_NO_MATCH
         template:
           application/json: '{
+            "action": "getUserByUserId",
             "userId": "$context.authorizer.claims.sub"
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
@@ -99,6 +102,44 @@ events:
         passThrough: WHEN_NO_MATCH
         template:
           application/json: '{
+            "action": "getUserByUserName",
             "userName": "$input.params(''username'')"
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
+      path: /user/top-reputed-users/{fetch_limit}/{last_evaluated_key}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "topReputedUsers",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
+      path: /user/follow-user-in-bulk
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "followUserInBulk",
+            "followedById": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}      

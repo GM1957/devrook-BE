@@ -50,10 +50,13 @@ resources:
   
     # >>>>>>>>>>--S3 BUCKETS--<<<<<<<<<<< #
     S3MainBucket: ${file(./Resources/S3MainBucket.yml)} 
+
     # >>>>>>>>>>--DYNAMO DB TABLES--<<<<<<<<<<< #
     UsersTable: ${file(./Resources/DynamoResources/UsersTable.yml)}
     TagsTable: ${file(./Resources/DynamoResources/TagsTable.yml)}
     TagMappingTable: ${file(./Resources/DynamoResources/TagMappingTable.yml)}
+    FollowUserMappingTable: ${file(./Resources/DynamoResources/FollowUserMappingTable.yml)}
+    VoteMappingTable: ${file(./Resources/DynamoResources/VoteMappingTable.yml)}
 
   Outputs:
     CognitoUserPoolId:

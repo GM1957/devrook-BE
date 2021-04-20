@@ -2,7 +2,8 @@ const {
   putItem,
   updateItem,
   deleteItem,
-  queryItem
+  queryItem,
+  queryItemPaginated
 } = require("../Utils/DBClient");
 
 const Tags = require("./allTags.json");
@@ -100,8 +101,10 @@ function getTag(event) {
     .catch(err => internalServerError(err));
 }
 
-function getPopularTags() {
+function getPopularTags(event) {
   console.log("Inside getPopularTags function");
+
+  const { limit, LastEvaluatedKey } = event;
 
   const params = {
     TableName: "TagsTable",
@@ -114,7 +117,14 @@ function getPopularTags() {
     }
   };
 
-  return queryItem(params)
+  if (limit && limit != "false") {
+    params.Limit = limit;
+  }
+  if (LastEvaluatedKey && LastEvaluatedKey != "false") {
+    params.ExclusiveStartKey = LastEvaluatedKey;
+  }
+
+  return queryItemPaginated(params)
     .then(result => okResponse("fetched result", result))
     .catch(err => internalServerError(err, "failed to fetch data"));
 }
@@ -199,7 +209,7 @@ function followTag(event) {
   };
 
   promises.push(putItem(mappingParams));
-  promises.push(increaseTagPopularity({ tagName }));
+  promises.push(increaseTagPopularity(tagName));
 
   return Promise.all(promises)
     .then(() => {
@@ -233,7 +243,7 @@ async function unFollowTag(event) {
 
   const mapDetails = await queryItem(findMapParams);
 
-  if (!mapdetails.data.length)
+  if (!mapdetails.length)
     return badRequestResponse(
       `no mapped details found with tag name: ${tagName} and user id : ${userId}`
     );
@@ -242,7 +252,7 @@ async function unFollowTag(event) {
     TableName: "TagMappingTable",
     Key: {
       tagName,
-      createdAt: mapDetails.data[0]
+      createdAt: mapDetails[0].createdAt
     }
   };
   promises.push(deleteItem(mapDeleteParams));
@@ -257,12 +267,34 @@ async function unFollowTag(event) {
     );
 }
 
+async function followTagInBulk(event) {
+  console.log("Inside followTagInBulk function", event);
+
+  const errors = customValidator(event, ["userId", "tagNames"]);
+
+  if (errors.length)
+    return badRequestResponse("missing mandetory fields", errors);
+
+  const { userId, tagNames } = event;
+
+  if (!tagNames.length) return badRequestResponse("no tags selected");
+  try {
+    for (let i = 0; i < tagNames.length; i++) {
+      await followTag({ userId, tagName: tagNames[i] });
+    }
+    return okResponse("tags followed successfully");
+  } catch (err) {
+    return internalServerError(err);
+  }
+}
+
 module.exports = {
   createTag,
   getTag,
   increaseTagPopularity,
   decreaseTagPopularity,
   followTag,
+  followTagInBulk,
   unFollowTag,
   createDefaultTags,
   getPopularTags

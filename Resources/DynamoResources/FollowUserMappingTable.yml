@@ -1,0 +1,27 @@
+Type: AWS::DynamoDB::Table
+Properties:
+  TableName: FollowUserMappingTable
+  AttributeDefinitions:
+    - AttributeName: userId
+      AttributeType: S
+    - AttributeName: followedById
+      AttributeType: S
+    - AttributeName: createdAt
+      AttributeType: S
+  KeySchema:
+  # i am seeing my followers
+    - AttributeName: userId 
+      KeyType: HASH
+    - AttributeName: createdAt 
+      KeyType: RANGE
+  GlobalSecondaryIndexes:
+    # i am seeing people i follow
+    - IndexName: byFollowedById
+      KeySchema:
+        - AttributeName: followedById
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+      Projection:
+        ProjectionType: ALL      
+  BillingMode: PAY_PER_REQUEST    

@@ -2,8 +2,13 @@ const {
   putItem,
   updateItem,
   deleteItem,
-  queryItem
+  queryItem,
+  queryItemPaginated
 } = require("../Utils/DBClient");
+
+const {
+  expressionValueGeneratorFornIN
+} = require("../Utils/expressionValueGeneratorForIN");
 
 const {
   createResponse,
@@ -31,12 +36,13 @@ function updateCognito(userId) {
     UserPoolId: USER_POOL_ID,
     Username: userId
   };
+  console.log("inside updateCognito function", params);
 
   return cognitoIdentityService
     .adminUpdateUserAttributes(params)
     .promise()
     .then(result => {
-      console.log("result", result);
+      console.log("cognito result", result);
       return okResponse("user update sucessfully in cognito", result);
     })
     .catch(err => {
@@ -66,6 +72,32 @@ function deleteCognitoUser(userId) {
 }
 
 // it will use when user seeing another user profile
+function getUserByUserNamePublicUse(event) {
+  console.log("Inside getByUserName Function", event);
+
+  const errors = customValidator(event, ["userName"]);
+
+  if (errors.length)
+    return badRequestResponse("missing mandetory fields", errors);
+
+  const { userName } = event;
+
+  const params = {
+    TableName: "UsersTable",
+    IndexName: "byUserName",
+    ProjectionExpression:
+      "userName, email, name, location, bio, profession, linkedinLink, githubLink, twitterLink, followers, reputation, createdAt",
+    KeyConditionExpression: "userName = :userName",
+    ExpressionAttributeValues: {
+      ":userName": userName
+    }
+  };
+
+  return queryItem(params)
+    .then(result => okResponse("fetched result", result))
+    .catch(err => internalServerError(err));
+}
+
 function getUserByUserName(event) {
   console.log("Inside getByUserName Function", event);
 
@@ -86,10 +118,7 @@ function getUserByUserName(event) {
   };
 
   return queryItem(params)
-    .then(result => {
-      delete result.userId;
-      return okResponse("fetched result", result);
-    })
+    .then(result => okResponse("fetched result", result))
     .catch(err => internalServerError(err));
 }
 
@@ -163,6 +192,9 @@ async function createUser(event) {
       linkedinLink: linkedinLink ? linkedinLink : "",
       githubLink: githubLink ? githubLink : "",
       twitterLink: twitterLink ? twitterLink : "",
+      followers: 0,
+      following: 0,
+      reputation: 10,
       createdAt: new Date(Date.now()).toISOString(),
       isDeactivated: "false"
     }
@@ -192,11 +224,13 @@ function updateUser(event) {
     return badRequestResponse("missing mandetory fields", errors);
 
   const { userId } = event;
-  delete event.userId;
 
+  delete event.userId;
   if (event.email) delete event.email;
-  if (event.userName) delete event.userRole;
   if (event.createdAt) delete event.createdAt;
+  if (event.reputation) delete evemt.reputation;
+  if (event.followers) delete event.followers;
+  if (event.following) delete event.following;
 
   let updateExpression = "set";
   let ExpressionAttributeNames = {};
@@ -257,10 +291,292 @@ function deleteUser(event) {
     );
 }
 
+function topReputedUsers(event) {
+  console.log("Inside topReputedUsers function");
+
+  const { limit, LastEvaluatedKey } = event;
+
+  const params = {
+    TableName: "UsersTable",
+    ScanIndexForward: false,
+    IndexName: "sortByReputation",
+    KeyConditionExpression: "isDeactivated = :isDeactivated",
+    ExpressionAttributeValues: {
+      ":isDeactivated": "false"
+    }
+  };
+
+  if (limit && limit != "false") {
+    params.Limit = limit;
+  }
+  if (LastEvaluatedKey && LastEvaluatedKey != "false") {
+    params.ExclusiveStartKey = LastEvaluatedKey;
+  }
+
+  return queryItemPaginated(params)
+    .then(result => okResponse("fetched items", result))
+    .catch(err => internalServerError(err));
+}
+
+async function followUser(event) {
+  console.log("Inside followUser function", event);
+
+  const errors = customValidator(event, ["followedById", "userName"]);
+
+  if (errors.length)
+    return badRequestResponse("missing mandetory fields", errors);
+
+  const { userName, followedById } = event;
+
+  const user = await getUserByUserName(event);
+  if (!user.data.length)
+    return badRequestResponse(`user not found in the db username: ${userName}`);
+
+  const followedByUser = await getUserByUserId({ userId: followedById });
+  if (!followedByUser.data.length)
+    return badRequestResponse(
+      `user not found in the db username: ${followedById}`
+    );
+
+  const promises = [];
+
+  const mappingParams = {
+    TableName: "FollowUserMappingTable",
+    Item: {
+      userId: user.data[0].userId,
+      followedById,
+      createdAt: new Date(Date.now()).toISOString(),
+      isDeactivated: "false"
+    }
+  };
+
+  promises.push(putItem(mappingParams));
+
+  const increaseReputationAndFollowerParams = {
+    TableName: "UsersTable",
+    Key: {
+      userId: user.data[0].userId
+    },
+    UpdateExpression: "set reputation = :reputation, followers = :followers",
+    ExpressionAttributeValues: {
+      ":reputation": user.data[0].reputation + 2,
+      ":followers": user.data[0].followers + 1
+    }
+  };
+
+  promises.push(updateItem(increaseReputationAndFollowerParams));
+
+  const increaseFollowingParams = {
+    TableName: "UsersTable",
+    Key: {
+      userId: followedByUser.data[0].userId
+    },
+    UpdateExpression: "set following = :following",
+    ExpressionAttributeValues: {
+      ":following": followedByUser.data[0].following + 1
+    }
+  };
+
+  promises.push(updateItem(increaseFollowingParams));
+
+  return Promise.all(promises)
+    .then(() => updateResponse("user Followed successFully"))
+    .catch(err => internalServerError(err));
+}
+
+async function unFollowUser(event) {
+  console.log("Inside unFollowUser function", event);
+
+  const errors = customValidator(event, ["followedById", "userName"]);
+
+  if (errors.length)
+    return badRequestResponse("missing mandetory fields", errors);
+
+  const { userName, followedById } = event;
+
+  const user = await getUserByUserName(event);
+  if (!user.data.length)
+    return badRequestResponse(`user not found in the db username: ${userName}`);
+  const followedByUser = await getUserByUserId({ userId: followedById });
+
+  if (!followedByUser.data.length)
+    return badRequestResponse(
+      `user not found in the db username: ${followedById}`
+    );
+
+  const promises = [];
+
+  const mappingParams = {
+    TableName: "FollowUserMappingTable",
+    IndexName: "byFollowedById",
+    KeyConditionExpression: "followedById = :followedById AND userId = :userId",
+    ExpressionAttributeValues: {
+      ":followedById": followedById,
+      ":userId": user.data.userId
+    }
+  };
+
+  const mappingDetails = await queryItem(mappingParams);
+  if (!mappingDetails.length)
+    return badRequestResponse(`no mapping details found`);
+
+  const mapDeleteParams = {
+    TableName: "FollowUserMappingTable",
+    Key: {
+      userId: mappingDetails[0].userId,
+      createdAt: mappingDetails[0].createdAt
+    }
+  };
+
+  promises.push(deleteItem(mapDeleteParams));
+
+  const decreaseFollowerParams = {
+    TableName: "UsersTable",
+    Key: {
+      userId: user.data[0].userId
+    },
+    UpdateExpression: "set reputation = :reputation, followers = :followers",
+    ExpressionAttributeValues: {
+      ":reputation": user.data[0].reputation - 2,
+      ":followers": user.data[0].followers - 1
+    }
+  };
+
+  promises.push(updateItem(decreaseFollowerParams));
+
+  const decreaseFollowingParams = {
+    TableName: "UsersTable",
+    Key: {
+      userId: followedByUser.data[0].userId
+    },
+    UpdateExpression: "set following = :following",
+    ExpressionAttributeValues: {
+      ":following": followedByUser.data[0].following - 1
+    }
+  };
+
+  promises.push(updateItem(decreaseFollowingParams));
+
+  return Promise.all(promises)
+    .then(() => updateResponse("user unFollowed successFully"))
+    .catch(err => internalServerError(err));
+}
+
+function myFollowers(event) {
+  console.log("Inside myFollowers function", event);
+
+  const errors = customValidator(event, ["userId"]);
+
+  if (errors.length)
+    return badRequestResponse("missing mandetory fields", errors);
+
+  const { userId } = event;
+
+  const params = {
+    TableName: "FollowUserMappingTable",
+    Limit: 50,
+    ScanIndexForward: false,
+    KeyConditionExpression: "userId = :userId",
+    ExpressionAttributeValues: {
+      ":userId": userId
+    }
+  };
+
+  return queryItem(params).then(async result => {
+    if (result.length) {
+      const followedByIds = result.map(ele => ele.followedById);
+      const expression = await expressionValueGeneratorFornIN(followedByIds);
+
+      const userQueryParams = {
+        TableName: "UsersTable",
+        ProjectionExpression:
+          "userName, email, name, location, bio, profession, linkedinLink, githubLink, twitterLink, followers, reputation, createdAt",
+        KeyConditionExpression: `userId IN (${expression.expressions})`,
+        ExpressionAttributeValues: expression.ExpressionAttributeValues
+      };
+
+      return queryItem(userQueryParams).then(users =>
+        okResponse("fetched details", users)
+      );
+    }
+    return okResponse("fetched details", result);
+  });
+}
+
+function usersIFollow(event) {
+  console.log("Inside usersIFollow function", event);
+
+  const errors = customValidator(event, ["userId"]);
+
+  if (errors.length)
+    return badRequestResponse("missing mandetory fields", errors);
+
+  const { userId } = event;
+
+  const params = {
+    TableName: "FollowUserMappingTable",
+    Limit: 50,
+    ScanIndexForward: false,
+    IndexName: "byFollowedById",
+    KeyConditionExpression: "followedById = :followedById",
+    ExpressionAttributeValues: {
+      ":followedById": userId
+    }
+  };
+
+  return queryItem(params).then(async result => {
+    if (result.length) {
+      const userIds = result.map(ele => ele.userId);
+      const expression = await expressionValueGeneratorFornIN(userIds);
+
+      const userQueryParams = {
+        TableName: "UsersTable",
+        ProjectionExpression:
+          "userName, email, name, location, bio, profession, linkedinLink, githubLink, twitterLink, followers, reputation, createdAt",
+        KeyConditionExpression: `userId IN (${expression.expressions})`,
+        ExpressionAttributeValues: expression.ExpressionAttributeValues
+      };
+
+      return queryItem(userQueryParams).then(users =>
+        okResponse("fetched details", users)
+      );
+    }
+    return okResponse("fetched details", result);
+  });
+}
+
+async function followUserInBulk(event) {
+  console.log("Inside followUserInBulk function", event);
+
+  const errors = customValidator(event, ["followedById", "userNames"]);
+
+  if (errors.length)
+    return badRequestResponse("missing mandetory fields", errors);
+
+  const { followedById, userNames } = event;
+
+  if (!userNames.length) return badRequestResponse("no user names selected");
+
+  try {
+    for (let i = 0; i < userNames.length; i++) {
+      await followUser({ followedById, userName: userNames[i] });
+    }
+    return okResponse("users followed sucessfully");
+  } catch (err) {
+    return internalServerError(err);
+  }
+}
+
 module.exports = {
   createUser,
   updateUser,
   deleteUser,
-  getUserByUserName,
-  getUserByUserId
+  getUserByUserNamePublicUse,
+  getUserByUserId,
+  topReputedUsers,
+  followUser,
+  followUserInBulk,
+  unFollowUser,
+  usersIFollow,
+  myFollowers
 };

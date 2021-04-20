@@ -28,6 +28,7 @@ events:
             "details": $input.json("$")
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
+
   - http:
       path: /tag/create-default
       method: POST
@@ -48,8 +49,9 @@ events:
             "userId": "$context.authorizer.claims.sub"
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
+
   - http:
-      path: /tag/{tag-name}
+      path: /tag/{name_of_tag}
       method: GET
       cors: true
       integration: lambda
@@ -58,11 +60,12 @@ events:
         template:
           application/json: '{
             "action": "getTag",
-            "tagName": "$input.params(''username'')"
+            "tagName": "$input.params(''name_of_tag'')"
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
+
   - http:
-      path: /tag/popular/all
+      path: /tag/popular-tags/{fetch_limit}/{last_evaluated_key}
       method: GET
       cors: true
       integration: lambda
@@ -70,9 +73,12 @@ events:
         passThrough: WHEN_NO_MATCH
         template:
           application/json: '{
-            "action": "getPopularTags"
+            "action": "getPopularTags",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
+
   - http:
       path: /tag/follow
       method: POST
@@ -94,6 +100,7 @@ events:
             "details": $input.json("$")
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
+
   - http:
       path: /tag/unfollow
       method: POST
@@ -111,6 +118,28 @@ events:
         template:
           application/json: '{
             "action": "unFollowTag",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
+      path: /tag/follow-tag-in-bulk
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "followTagInBulk",
             "userId": "$context.authorizer.claims.sub",
             "details": $input.json("$")
             }'
