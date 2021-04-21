@@ -25,17 +25,35 @@ const { cognitoIdentityService } = require("../Utils/cognitoConnection.js");
 
 const { USER_POOL_ID } = process.env;
 
-function updateCognito(userId) {
-  const params = {
-    UserAttributes: [
-      {
-        Name: "profile",
-        Value: "1"
-      }
-    ],
+function updateCognito(event) {
+  const { userId, zoneInfo, profile } = event;
+
+  let params = {
+    UserAttributes: [],
     UserPoolId: USER_POOL_ID,
     Username: userId
   };
+
+  if (zoneInfo) {
+    params["UserAttributes"] = [
+      ...params.UserAttributes,
+      {
+        Name: "zoneinfo",
+        Value: zoneInfo
+      }
+    ];
+  }
+
+  if (profile) {
+    params["UserAttributes"] = [
+      ...params.UserAttributes,
+      {
+        Name: "profile",
+        Value: profile
+      }
+    ];
+  }
+
   console.log("inside updateCognito function", params);
 
   return cognitoIdentityService
@@ -202,7 +220,7 @@ async function createUser(event) {
 
   return putItem(params)
     .then(async () => {
-      await updateCognito(userId);
+      await updateCognito({ userId, zoneInfo: "1", profile: userName });
       return createResponse(
         `user created successfully with userId ${userId} and email address ${email}`
       );
@@ -255,9 +273,12 @@ function updateUser(event) {
   };
 
   return updateItem(params)
-    .then(() =>
-      updateResponse(`user updated successfully with userId ${userId}`)
-    )
+    .then(async () => {
+      if (event.userName) {
+        await updateCognito({ userId, profile: event.userName });
+      }
+      return updateResponse(`user updated successfully with userId ${userId}`);
+    })
     .catch(err => internalServerError(err, `Error to update the user`));
 }
 

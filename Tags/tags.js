@@ -278,14 +278,25 @@ async function followTagInBulk(event) {
   const { userId, tagNames } = event;
 
   if (!tagNames.length) return badRequestResponse("no tags selected");
-  try {
-    for (let i = 0; i < tagNames.length; i++) {
-      await followTag({ userId, tagName: tagNames[i] });
-    }
-    return okResponse("tags followed successfully");
-  } catch (err) {
-    return internalServerError(err);
-  }
+
+  const promises = [];
+
+  tagNames.forEach(tagName => {
+    promises.push(followTag({ userId, tagName }));
+  });
+
+  return Promise.all(promises)
+    .then(() => okResponse("tags followed successfully"))
+    .catch(err => internalServerError(err));
+
+  // try {
+  //   for (let i = 0; i < tagNames.length; i++) {
+  //     await followTag({ userId, tagName: tagNames[i] });
+  //   }
+  //   return okResponse("tags followed successfully");
+  // } catch (err) {
+  //   return internalServerError(err);
+  // }
 }
 
 module.exports = {
