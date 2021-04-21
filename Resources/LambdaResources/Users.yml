@@ -94,7 +94,7 @@ events:
       response: ${file(./Resources/LambdaResponses.yml)}
 
   - http:
-      path: /user/{username}
+      path: /user/{user_name}
       method: GET
       cors: true
       integration: lambda
@@ -103,7 +103,7 @@ events:
         template:
           application/json: '{
             "action": "getUserByUserName",
-            "userName": "$input.params(''username'')"
+            "userName": "$input.params(''user_name'')"
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
 

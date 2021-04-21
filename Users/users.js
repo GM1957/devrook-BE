@@ -104,8 +104,9 @@ function getUserByUserNamePublicUse(event) {
     TableName: "UsersTable",
     IndexName: "byUserName",
     ProjectionExpression:
-      "userName, email, name, location, bio, profession, linkedinLink, githubLink, twitterLink, followers, reputation, createdAt",
+      "userName, email, #n, location, bio, profession, linkedinLink, githubLink, twitterLink, followers, reputation, createdAt",
     KeyConditionExpression: "userName = :userName",
+    ExpressionAttributeNames: {'#n': 'name'},
     ExpressionAttributeValues: {
       ":userName": userName
     }
@@ -511,8 +512,9 @@ function myFollowers(event) {
       const userQueryParams = {
         TableName: "UsersTable",
         ProjectionExpression:
-          "userName, email, name, location, bio, profession, linkedinLink, githubLink, twitterLink, followers, reputation, createdAt",
+          "userName, email, #n, location, bio, profession, linkedinLink, githubLink, twitterLink, followers, reputation, createdAt",
         KeyConditionExpression: `userId IN (${expression.expressions})`,
+        ExpressionAttributeNames: {'#n': 'name'},
         ExpressionAttributeValues: expression.ExpressionAttributeValues
       };
 
@@ -553,8 +555,9 @@ function usersIFollow(event) {
       const userQueryParams = {
         TableName: "UsersTable",
         ProjectionExpression:
-          "userName, email, name, location, bio, profession, linkedinLink, githubLink, twitterLink, followers, reputation, createdAt",
+          "userName, email, #n, location, bio, profession, linkedinLink, githubLink, twitterLink, followers, reputation, createdAt",
         KeyConditionExpression: `userId IN (${expression.expressions})`,
+        ExpressionAttributeNames: {'#n': 'name'},
         ExpressionAttributeValues: expression.ExpressionAttributeValues
       };
 
