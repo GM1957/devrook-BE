@@ -104,7 +104,7 @@ function getUserByUserNamePublicUse(event) {
     TableName: "UsersTable",
     IndexName: "byUserName",
     ProjectionExpression:
-      "userName, email, #n, #l, bio, profession, linkedinLink, githubLink, twitterLink, followers, following, reputation, createdAt",
+      "userName, email, #n, #l, bio, profession,  profilePicture, linkedinLink, githubLink, twitterLink, followers, following, reputation, createdAt",
     ExpressionAttributeNames: { "#n": "name", "#l": "location" },
     KeyConditionExpression: "userName = :userName",
     ExpressionAttributeValues: {
@@ -208,6 +208,7 @@ async function createUser(event) {
       location: location ? location : "Unknown",
       bio: bio ? bio : "",
       profession: profession ? profession : "",
+      profilePicture: "",
       linkedinLink: linkedinLink ? linkedinLink : "",
       githubLink: githubLink ? githubLink : "",
       twitterLink: twitterLink ? twitterLink : "",
@@ -512,7 +513,7 @@ function myFollowers(event) {
       const userQueryParams = {
         TableName: "UsersTable",
         ProjectionExpression:
-          "userName, email, #n, #l, bio, profession, linkedinLink, githubLink, twitterLink, followers, following, reputation, createdAt",
+          "userName, email, #n, #l, bio, profession,  profilePicture, linkedinLink, githubLink, twitterLink, followers, following, reputation, createdAt",
         ExpressionAttributeNames: { "#n": "name", "#l": "location" },
         KeyConditionExpression: `userId IN (${expression.expressions})`,
         ExpressionAttributeValues: expression.ExpressionAttributeValues
@@ -555,7 +556,7 @@ function usersIFollow(event) {
       const userQueryParams = {
         TableName: "UsersTable",
         ProjectionExpression:
-          "userName, email, #n, #l, bio, profession, linkedinLink, githubLink, twitterLink, followers, following, reputation, createdAt",
+          "userName, email, #n, #l, bio, profession,  profilePicture, linkedinLink, githubLink, twitterLink, followers, following, reputation, createdAt",
         ExpressionAttributeNames: { "#n": "name", "#l": "location" },
         KeyConditionExpression: `userId IN (${expression.expressions})`,
         ExpressionAttributeValues: expression.ExpressionAttributeValues
