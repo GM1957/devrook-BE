@@ -1,0 +1,18 @@
+Type: 'AWS::S3::BucketPolicy'
+Properties:
+  Bucket: !Ref S3MainBucket
+  PolicyDocument:
+    Statement:
+      - Action:
+          - 's3:GetObject'
+        Effect: Allow
+        Resource: !Join
+          - ''
+          - - 'arn:aws:s3:::'
+            - !Ref S3MainBucket
+            - /*
+        Sid: "PublicReadGetObject"
+        Principal: '*'
+
+
+

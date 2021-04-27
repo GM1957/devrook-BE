@@ -30,11 +30,12 @@ custom:
     prod: "https://your-domain-name-here.com/"
     dev: "https://your-domain-name-here.com/"
 
-  s3MainBucket: "${self:service}-main-bucket"
+  s3MainBucket: "${self:provider.stage}-${self:service}-main-bucket"
 
 functions:
   Users: ${file(./Resources/LambdaResources/Users.yml)}
   Tags: ${file(./Resources/LambdaResources/Tags.yml)}
+  S3upload: ${file(./Resources/LambdaResources/S3upload.yml)}
 
 resources:
   Resources:
@@ -50,6 +51,7 @@ resources:
   
     # >>>>>>>>>>--S3 BUCKETS--<<<<<<<<<<< #
     S3MainBucket: ${file(./Resources/S3MainBucket.yml)} 
+    S3MainBucketPolicy: ${file(./Resources/S3MainBucketPolicy.yml)} 
 
     # >>>>>>>>>>--DYNAMO DB TABLES--<<<<<<<<<<< #
     UsersTable: ${file(./Resources/DynamoResources/UsersTable.yml)}

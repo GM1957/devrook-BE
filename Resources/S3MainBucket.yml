@@ -1,7 +1,8 @@
 Type: AWS::S3::Bucket
 Properties:
   BucketName: ${self:custom.s3MainBucket}
-  AccessControl: PublicRead
+  VersioningConfiguration:
+      Status: Enabled
   CorsConfiguration:
     CorsRules:
     - AllowedMethods:

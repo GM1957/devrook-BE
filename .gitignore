@@ -2,3 +2,4 @@ node_modules
 .serverless
 dist
 test.js
+.DS_STORE

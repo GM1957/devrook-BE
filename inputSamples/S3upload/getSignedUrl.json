@@ -1,0 +1,6 @@
+{
+  "bucket": "devrook-be-main-bucket",
+  "directory": "posts",
+  "userId": "1b77c729-8e04-41d2-ab58-23f7e2159522",
+  "action": "getPresignedUploadUrl"
+}
