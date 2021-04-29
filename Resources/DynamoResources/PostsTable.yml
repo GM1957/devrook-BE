@@ -1,0 +1,35 @@
+Type: AWS::DynamoDB::Table
+Properties:
+  TableName: PostsTable
+  AttributeDefinitions:
+    - AttributeName: userId
+      AttributeType: S
+    - AttributeName: createdAt
+      AttributeType: S
+    - AttributeName: postType
+      AttributeType: S
+    - AttributeName: isDeactivated
+      AttributeType: S
+  KeySchema:
+    - AttributeName: userId 
+      KeyType: HASH
+    - AttributeName: createdAt 
+      KeyType: RANGE
+  GlobalSecondaryIndexes:
+    - IndexName: byPostType
+      KeySchema:
+        - AttributeName: postType
+          KeyType: HASH
+        - AttributeName: createdAt 
+          KeyType: RANGE  
+      Projection:
+        ProjectionType: ALL    
+    - IndexName: byIsDeactivated
+      KeySchema:
+        - AttributeName: isDeactivated
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+      Projection:
+        ProjectionType: ALL     
+  BillingMode: PAY_PER_REQUEST    

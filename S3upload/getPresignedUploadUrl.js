@@ -18,7 +18,7 @@ async function getPresignedUploadUrl(event) {
     Bucket: bucket,
     Key: key,
     ContentType: "image/*",
-    Expires: 1000
+    Expires: 360
   });
   return url;
 }

@@ -13,6 +13,3 @@ Properties:
             - /*
         Sid: "PublicReadGetObject"
         Principal: '*'
-
-
-

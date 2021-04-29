@@ -36,6 +36,7 @@ functions:
   Users: ${file(./Resources/LambdaResources/Users.yml)}
   Tags: ${file(./Resources/LambdaResources/Tags.yml)}
   S3upload: ${file(./Resources/LambdaResources/S3upload.yml)}
+  Posts: ${file(./Resources/LambdaResources/Posts.yml)}
 
 resources:
   Resources:
@@ -59,6 +60,7 @@ resources:
     TagMappingTable: ${file(./Resources/DynamoResources/TagMappingTable.yml)}
     FollowUserMappingTable: ${file(./Resources/DynamoResources/FollowUserMappingTable.yml)}
     VoteMappingTable: ${file(./Resources/DynamoResources/VoteMappingTable.yml)}
+    PostsTable: ${file(./Resources/DynamoResources/PostsTable.yml)}
 
   Outputs:
     CognitoUserPoolId:
