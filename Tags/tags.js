@@ -19,7 +19,7 @@ const {
 
 const { customValidator } = require("../Utils/customValidator");
 
-function createTag(event) {
+async function createTag(event) {
   console.log("Inside createTag function", event);
   const errors = customValidator(event, ["tagName"]);
 
@@ -27,6 +27,12 @@ function createTag(event) {
     return badRequestResponse("missing mandetory fields", errors);
 
   const { tagName, description } = event;
+
+  const tagCheck = await getTag({ tagName });
+
+  console.log("tagcheck", tagCheck)
+
+  if(tagCheck.data.length) return badRequestResponse(`tag already exists tagName: ${tagName}`)
 
   const params = {
     TableName: "TagsTable",
@@ -64,7 +70,7 @@ function createDefaultTags(event) {
 
   const { userId } = event;
 
-  if (userId != "082416af-95ef-4fca-811c-c52d0df9e976")
+  if (userId != "0407cd68-c8fb-41f9-9115-f05a2e3bb3c6")
     return badRequestResponse("you are not an admin");
 
   Tags.forEach(tag => {
@@ -136,7 +142,8 @@ async function increaseTagPopularity(tagName) {
     const params = {
       TableName: "TagsTable",
       Key: {
-        tagName: tagName
+        tagName: tagName,
+        createdAt: tagDetails.data[0].createdAt
       },
       UpdateExpression: "set popularity = :popularity",
       ExpressionAttributeValues: {
@@ -164,7 +171,8 @@ async function decreaseTagPopularity(tagName) {
     const params = {
       TableName: "TagsTable",
       Key: {
-        tagName: tagName
+        tagName: tagName,
+        createdAt: tagDetails.data[0].createdAt
       },
       UpdateExpression: "set popularity = :popularity",
       ExpressionAttributeValues: {

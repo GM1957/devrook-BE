@@ -7,7 +7,7 @@ const {
   updateItem,
   deleteItem,
   queryItem,
-  queryItemPaginated
+  queryItemPaginated,
 } = require("../Utils/DBClient");
 
 const {
@@ -16,7 +16,7 @@ const {
   okResponse,
   deleteResponse,
   internalServerError,
-  badRequestResponse
+  badRequestResponse,
 } = require("../Utils/responseCodes").responseMessages;
 
 const { customValidator } = require("../Utils/customValidator");
@@ -28,7 +28,7 @@ function createPost(event) {
     "userId",
     "postType",
     "title",
-    "tags"
+    "tags",
   ]);
 
   if (firstStageErrors.length)
@@ -44,12 +44,14 @@ function createPost(event) {
 
   if (tags.length > 5)
     return badRequestResponse("you cannot add more that 5 tags");
+  if (tags.length < 1)
+    return badRequestResponse("you have to choose atleast one tag");
 
   const titleArr = title.split(" ");
 
   let hashedUrl = "";
 
-  titleArr.forEach(ele => {
+  titleArr.forEach((ele) => {
     if (ele.length) hashedUrl += ele + "-";
   });
 
@@ -69,8 +71,8 @@ function createPost(event) {
       downVote: 0,
       like: 0,
       createdAt: new Date(Date.now()).toISOString(),
-      isDeactivated: "false"
-    }
+      isDeactivated: "false",
+    },
   };
 
   return putItem(params)
@@ -78,34 +80,28 @@ function createPost(event) {
       try {
         const promises = [];
 
-        for (let i = 0; i < tags.length; i++) {
-          try {
-            const response = await createTag({ tagName: tags[i] });
-            console.log("response from posts", response);
-          } catch (err) {
-            console.error(err);
-          }
-          promises.push(increaseTagPopularity({ tagName: tags[i] }));
+        tags.forEach((tag) => {
+          promises.push(increaseTagPopularity(tag));
 
           const mappingParams = {
             TableName: "TagMappingTable",
             Item: {
-              tagName: tags[i],
+              tagName: tags,
               mappedWithId: hashedUrl,
-              mappingType: "question",
+              mappingType: postType,
               createdAt: new Date(Date.now()).toISOString(),
-              isDeactivated: "false"
-            }
+              isDeactivated: "false",
+            },
           };
           promises.push(putItem(mappingParams));
-        }
+        });
         await Promise.all(promises);
       } catch (err) {
         console.log(err);
       }
       return createResponse(`${postType} created successfully`);
     })
-    .catch(err => internalServerError(err, `unable to create ${postType}`));
+    .catch((err) => internalServerError(err, `unable to create ${postType}`));
 }
 
 module.exports = { createPost };

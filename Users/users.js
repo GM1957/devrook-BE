@@ -235,7 +235,7 @@ async function createUser(event) {
     );
 }
 
-function updateUser(event) {
+async function updateUser(event) {
   console.log("Inside updateUser Function", event);
 
   const errors = customValidator(event, ["userId"]);
@@ -244,6 +244,8 @@ function updateUser(event) {
     return badRequestResponse("missing mandetory fields", errors);
 
   const { userId } = event;
+
+  const user = await getUserByUserId({userId})
 
   delete event.userId;
   if (event.email) delete event.email;
@@ -267,7 +269,8 @@ function updateUser(event) {
   const params = {
     TableName: "UsersTable",
     Key: {
-      userId: userId
+      userId: userId,
+      createdAt: user.data[0].createdAt
     },
     UpdateExpression: updateExpression,
     ExpressionAttributeNames: ExpressionAttributeNames,
@@ -378,7 +381,8 @@ async function followUser(event) {
   const increaseReputationAndFollowerParams = {
     TableName: "UsersTable",
     Key: {
-      userId: user.data[0].userId
+      userId: user.data[0].userId,
+      createdAt: user.data[0].createdAt
     },
     UpdateExpression: "set reputation = :reputation, followers = :followers",
     ExpressionAttributeValues: {
@@ -392,7 +396,8 @@ async function followUser(event) {
   const increaseFollowingParams = {
     TableName: "UsersTable",
     Key: {
-      userId: followedByUser.data[0].userId
+      userId: followedByUser.data[0].userId,
+      createdAt: followedByUser.data[0].createdAt
     },
     UpdateExpression: "set following = :following",
     ExpressionAttributeValues: {
@@ -456,7 +461,8 @@ async function unFollowUser(event) {
   const decreaseFollowerParams = {
     TableName: "UsersTable",
     Key: {
-      userId: user.data[0].userId
+      userId: user.data[0].userId,
+      createdAt: user.data[0].createdAt
     },
     UpdateExpression: "set reputation = :reputation, followers = :followers",
     ExpressionAttributeValues: {
@@ -470,7 +476,8 @@ async function unFollowUser(event) {
   const decreaseFollowingParams = {
     TableName: "UsersTable",
     Key: {
-      userId: followedByUser.data[0].userId
+      userId: followedByUser.data[0].userId,
+      createdAt: followedByUser.data[0].createdAt
     },
     UpdateExpression: "set following = :following",
     ExpressionAttributeValues: {
@@ -497,7 +504,6 @@ function myFollowers(event) {
 
   const params = {
     TableName: "FollowUserMappingTable",
-    Limit: 50,
     ScanIndexForward: false,
     KeyConditionExpression: "userId = :userId",
     ExpressionAttributeValues: {
@@ -539,7 +545,6 @@ function usersIFollow(event) {
 
   const params = {
     TableName: "FollowUserMappingTable",
-    Limit: 50,
     ScanIndexForward: false,
     IndexName: "byFollowedById",
     KeyConditionExpression: "followedById = :followedById",
