@@ -56,7 +56,7 @@ function createPost(event) {
   hashedUrl += uuid.v4().substring(0, 4);
 
   const params = {
-    TableName: PostsTable,
+    TableName: "PostsTable",
     Item: {
       hashedUrl,
       userId,
