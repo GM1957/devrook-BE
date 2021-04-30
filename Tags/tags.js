@@ -28,6 +28,7 @@ function createTag(event) {
 
   const { tagName, description } = event;
 
+  // ConditionExpression: 'attribute_not_exists(tagName)' FOR THIS CONDITON A NEW WILL BE INSERTED IF THAT TAGNAME IS NOT PRESENT IN THE DB 
   const params = {
     TableName: "TagsTable",
     Item: {
@@ -37,6 +38,7 @@ function createTag(event) {
       isDeactivated: "false",
       createdAt: new Date(Date.now()).toISOString(),
     },
+    ConditionExpression: 'attribute_not_exists(tagName)'
   };
 
   return putItem(params)
