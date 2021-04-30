@@ -78,13 +78,12 @@ function createPost(event) {
       try {
         const promises = [];
 
-        for(let i = 0; i < tags.length; i++){
-          try{
-           const response = await createTag({ tagName: tags[i]});
-            console.log("response from posts", response)
-          }
-          catch(err) {
-            console.error(err)
+        for (let i = 0; i < tags.length; i++) {
+          try {
+            const response = await createTag({ tagName: tags[i] });
+            console.log("response from posts", response);
+          } catch (err) {
+            console.error(err);
           }
           promises.push(increaseTagPopularity({ tagName: tags[i] }));
 
@@ -99,12 +98,12 @@ function createPost(event) {
             }
           };
           promises.push(putItem(mappingParams));
-        };
+        }
         await Promise.all(promises);
       } catch (err) {
         console.log(err);
       }
-      return createResponse(`${postType} created successfully`)
+      return createResponse(`${postType} created successfully`);
     })
     .catch(err => internalServerError(err, `unable to create ${postType}`));
 }

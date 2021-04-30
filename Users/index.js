@@ -24,6 +24,7 @@ exports.main = async event => {
 
   if (action === "create") {
     const { details } = event;
+    if (details.userId) delete details.userId;
     event = {
       ...event,
       ...details
@@ -33,6 +34,7 @@ exports.main = async event => {
     return createUser(event);
   } else if (action === "update") {
     const { details } = event;
+    if (details.userId) delete details.userId;
 
     event = {
       ...event,
@@ -51,7 +53,7 @@ exports.main = async event => {
     return topReputedUsers(event);
   } else if (action === "followUserInBulk") {
     const { details } = event;
-
+    if (details.userId) delete details.userId;
     event = {
       ...event,
       ...details

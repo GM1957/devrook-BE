@@ -13,10 +13,13 @@ exports.main = async event => {
   if (action === "create") {
     const { details } = event;
 
+    if (details.userId) delete details.userId;
+
     event = {
       ...event,
       ...details
     };
+
     delete event.details;
 
     return createPost(event);

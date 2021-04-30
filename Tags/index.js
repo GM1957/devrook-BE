@@ -4,7 +4,8 @@ const {
   followTagInBulk,
   unFollowTag,
   createDefaultTags,
-  getPopularTags
+  getPopularTags,
+  createTag
 } = require("./tags");
 
 const {
@@ -26,6 +27,8 @@ exports.main = async event => {
   } else if (action === "followTag") {
     const { details } = event;
 
+    if (details.userId) delete details.userId;
+
     event = {
       ...event,
       ...details
@@ -37,6 +40,8 @@ exports.main = async event => {
   } else if (action === "followTagInBulk") {
     const { details } = event;
 
+    if (details.userId) delete details.userId;
+
     event = {
       ...event,
       ...details
@@ -47,6 +52,8 @@ exports.main = async event => {
     return followTagInBulk(event);
   } else if (action === "unFollowTag") {
     const { details } = event;
+
+    if (details.userId) delete details.userId;
 
     event = {
       ...event,
