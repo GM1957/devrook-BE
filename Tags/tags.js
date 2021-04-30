@@ -3,7 +3,7 @@ const {
   updateItem,
   deleteItem,
   queryItem,
-  queryItemPaginated
+  queryItemPaginated,
 } = require("../Utils/DBClient");
 
 const Tags = require("./allTags.json");
@@ -14,14 +14,14 @@ const {
   okResponse,
   deleteResponse,
   internalServerError,
-  badRequestResponse
+  badRequestResponse,
 } = require("../Utils/responseCodes").responseMessages;
 
 const { customValidator } = require("../Utils/customValidator");
 
 function createTag(event) {
   console.log("Inside createTag function", event);
-  const errors = customValidator(event, ["tagName", "description"]);
+  const errors = customValidator(event, ["tagName"]);
 
   if (errors.length)
     return badRequestResponse("missing mandetory fields", errors);
@@ -32,10 +32,11 @@ function createTag(event) {
     TableName: "TagsTable",
     Item: {
       tagName,
-      description,
+      description: description ? description : "",
       popularity: 1,
-      isDeactivated: "false"
-    }
+      isDeactivated: "false",
+      createdAt: new Date(Date.now()).toISOString(),
+    },
   };
 
   return putItem(params)
@@ -44,7 +45,7 @@ function createTag(event) {
         `tag created successfully with the name of ${tagName}`
       );
     })
-    .catch(err =>
+    .catch((err) =>
       internalServerError(
         err,
         `unable to create tag with the tag name of ${tagName}`
@@ -63,10 +64,10 @@ function createDefaultTags(event) {
 
   const { userId } = event;
 
-  if (userId != "1b77c729-8e04-41d2-ab58-23f7e2159522")
+  if (userId != "082416af-95ef-4fca-811c-c52d0df9e976")
     return badRequestResponse("you are not an admin");
 
-  Tags.forEach(tag => {
+  Tags.forEach((tag) => {
     promises.push(
       createTag({ tagName: tag.tagName, description: tag.description })
     );
@@ -74,7 +75,7 @@ function createDefaultTags(event) {
 
   return Promise.all(promises)
     .then(() => okResponse("default tags set successfully"))
-    .catch(err => internalServerError(err, "failed to set defaul tags"));
+    .catch((err) => internalServerError(err, "failed to set defaul tags"));
 }
 
 function getTag(event) {
@@ -90,13 +91,13 @@ function getTag(event) {
     TableName: "TagsTable",
     KeyConditionExpression: "tagName = :tagName",
     ExpressionAttributeValues: {
-      ":tagName": tagName
-    }
+      ":tagName": tagName,
+    },
   };
 
   return queryItem(params)
-    .then(result => okResponse("fetched result", result))
-    .catch(err => internalServerError(err));
+    .then((result) => okResponse("fetched result", result))
+    .catch((err) => internalServerError(err));
 }
 
 function getPopularTags(event) {
@@ -110,8 +111,8 @@ function getPopularTags(event) {
     IndexName: "sortByPopularity",
     KeyConditionExpression: "isDeactivated = :isDeactivated",
     ExpressionAttributeValues: {
-      ":isDeactivated": "false"
-    }
+      ":isDeactivated": "false",
+    },
   };
 
   if (limit && limit != "false") {
@@ -122,8 +123,8 @@ function getPopularTags(event) {
   }
 
   return queryItemPaginated(params)
-    .then(result => okResponse("fetched result", result))
-    .catch(err => internalServerError(err, "failed to fetch data"));
+    .then((result) => okResponse("fetched result", result))
+    .catch((err) => internalServerError(err, "failed to fetch data"));
 }
 
 async function increaseTagPopularity(tagName) {
@@ -135,17 +136,17 @@ async function increaseTagPopularity(tagName) {
     const params = {
       TableName: "TagsTable",
       Key: {
-        tagName: tagName
+        tagName: tagName,
       },
       UpdateExpression: "set popularity = :popularity",
       ExpressionAttributeValues: {
-        ":popularity": tagDetails.data[0].popularity + 1
-      }
+        ":popularity": tagDetails.data[0].popularity + 1,
+      },
     };
 
     return updateItem(params)
       .then(() => updateResponse(`tag popularity increased by 1 ${tagName}`))
-      .catch(err =>
+      .catch((err) =>
         internalServerError(
           err,
           `unable to increase the populariry of ${tagName} tag`
@@ -163,17 +164,17 @@ async function decreaseTagPopularity(tagName) {
     const params = {
       TableName: "TagsTable",
       Key: {
-        tagName: tagName
+        tagName: tagName,
       },
       UpdateExpression: "set popularity = :popularity",
       ExpressionAttributeValues: {
-        ":popularity": tagDetails.data[0].popularity - 1
-      }
+        ":popularity": tagDetails.data[0].popularity - 1,
+      },
     };
 
     return updateItem(params)
       .then(() => updateResponse(`tag popularity decreased by 1 ${tagName}`))
-      .catch(err =>
+      .catch((err) =>
         internalServerError(
           err,
           `unable to decrease the populariry of ${tagName} tag`
@@ -201,8 +202,8 @@ function followTag(event) {
       mappedWithId: userId,
       mappingType: "User",
       createdAt: new Date(Date.now()).toISOString(),
-      isDeactivated: "false"
-    }
+      isDeactivated: "false",
+    },
   };
 
   promises.push(putItem(mappingParams));
@@ -212,7 +213,7 @@ function followTag(event) {
     .then(() => {
       return createResponse(`tag followed succesfully : ${tagName}`);
     })
-    .catch(err =>
+    .catch((err) =>
       internalServerError(err, `unable to follow the tag : ${tagName}`)
     );
 }
@@ -234,8 +235,8 @@ async function unFollowTag(event) {
     KeyConditionExpression: "userId = :userId And tagName = :tagName",
     ExpressionAttributeValues: {
       ":userId": userId,
-      ":tagName": tagName
-    }
+      ":tagName": tagName,
+    },
   };
 
   const mapDetails = await queryItem(findMapParams);
@@ -249,8 +250,8 @@ async function unFollowTag(event) {
     TableName: "TagMappingTable",
     Key: {
       tagName,
-      createdAt: mapDetails[0].createdAt
-    }
+      createdAt: mapDetails[0].createdAt,
+    },
   };
   promises.push(deleteItem(mapDeleteParams));
   promises.push(decreaseTagPopularity({ tagName }));
@@ -259,7 +260,7 @@ async function unFollowTag(event) {
     .then(() => {
       return createResponse(`tag unfollowed succesfully : ${tagName}`);
     })
-    .catch(err =>
+    .catch((err) =>
       internalServerError(err, `unable to unfollow the tag : ${tagName}`)
     );
 }
@@ -278,13 +279,13 @@ async function followTagInBulk(event) {
 
   const promises = [];
 
-  tagNames.forEach(tagName => {
+  tagNames.forEach((tagName) => {
     promises.push(followTag({ userId, tagName }));
   });
 
   return Promise.all(promises)
     .then(() => okResponse("tags followed successfully"))
-    .catch(err => internalServerError(err));
+    .catch((err) => internalServerError(err));
 }
 
 module.exports = {
@@ -296,5 +297,5 @@ module.exports = {
   followTagInBulk,
   unFollowTag,
   createDefaultTags,
-  getPopularTags
+  getPopularTags,
 };

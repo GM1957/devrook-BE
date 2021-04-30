@@ -40,7 +40,7 @@ function createPost(event) {
       return badRequestResponse("missing mandetory fields", secondStageErrors);
   }
 
-  const { userId, postType, title, content, tags } = event;
+  const { userId, postType, title, content, coverImage, tags } = event;
 
   if (tags.length > 5)
     return badRequestResponse("you cannot add more that 5 tags");
@@ -74,19 +74,24 @@ function createPost(event) {
   };
 
   return putItem(params)
-    .then(() => createResponse(`${postType} created successfully`))
     .then(async () => {
       try {
         const promises = [];
 
-        tags.forEach(tag => {
-          promises.push(createTag({ tagName: tag, description: "" }));
-          promises.push(increaseTagPopularity({ tagName: tag }));
+        for(let i = 0; i < tags.length; i++){
+          try{
+           const response = await createTag({ tagName: tags[i]});
+            console.log("response from posts", response)
+          }
+          catch(err) {
+            console.error(err)
+          }
+          promises.push(increaseTagPopularity({ tagName: tags[i] }));
 
           const mappingParams = {
             TableName: "TagMappingTable",
             Item: {
-              tagName,
+              tagName: tags[i],
               mappedWithId: hashedUrl,
               mappingType: "question",
               createdAt: new Date(Date.now()).toISOString(),
@@ -94,11 +99,12 @@ function createPost(event) {
             }
           };
           promises.push(putItem(mappingParams));
-        });
+        };
         await Promise.all(promises);
       } catch (err) {
         console.log(err);
       }
+      return createResponse(`${postType} created successfully`)
     })
     .catch(err => internalServerError(err, `unable to create ${postType}`));
 }

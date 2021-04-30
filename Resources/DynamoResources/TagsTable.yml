@@ -4,6 +4,8 @@ Properties:
   AttributeDefinitions:
     - AttributeName: tagName
       AttributeType: S
+    - AttributeName: createdAt
+      AttributeType: S
     - AttributeName: popularity
       AttributeType: N
     - AttributeName: isDeactivated
@@ -11,6 +13,8 @@ Properties:
   KeySchema:
     - AttributeName: tagName 
       KeyType: HASH
+    - AttributeName: createdAt
+      KeyType: RANGE  
   GlobalSecondaryIndexes:
     - IndexName: sortByPopularity
       KeySchema:

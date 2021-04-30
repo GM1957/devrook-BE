@@ -15,6 +15,8 @@ Properties:
   KeySchema:
     - AttributeName: hashedUrl 
       KeyType: HASH
+    - AttributeName: createdAt
+      KeyType: RANGE
   GlobalSecondaryIndexes:
     - IndexName: byUserId
       KeySchema:

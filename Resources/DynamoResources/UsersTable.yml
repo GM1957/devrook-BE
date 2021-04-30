@@ -4,6 +4,8 @@ Properties:
   AttributeDefinitions:
     - AttributeName: userId
       AttributeType: S
+    - AttributeName: createdAt
+      AttributeType: S
     - AttributeName: userName
       AttributeType: S
     - AttributeName: isDeactivated
@@ -15,6 +17,8 @@ Properties:
   KeySchema:
     - AttributeName: userId 
       KeyType: HASH
+    - AttributeName: createdAt
+      KeyType: RANGE  
   GlobalSecondaryIndexes:
     - IndexName: byUserName
       KeySchema:

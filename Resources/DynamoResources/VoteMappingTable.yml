@@ -9,7 +9,7 @@ Properties:
   KeySchema:
     - AttributeName: voteId 
       KeyType: HASH
-    - AttributeName: userId 
+    - AttributeName: createdAt 
       KeyType: RANGE
   GlobalSecondaryIndexes:
     - IndexName: byUserId
