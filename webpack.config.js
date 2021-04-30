@@ -6,7 +6,7 @@ const config = {
     Users: "./Users/index.js",
     Tags: "./Tags/index.js",
     S3upload: "./S3upload/index.js",
-    Posts: "./S3upload/index.js"
+    Posts: "./Posts/index.js"
   },
   output: {
     filename: "[name]/index.js",

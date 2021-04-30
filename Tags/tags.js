@@ -21,21 +21,19 @@ const { customValidator } = require("../Utils/customValidator");
 
 function createTag(event) {
   console.log("Inside createTag function", event);
-  const errors = customValidator(event, ["userId", "tagName", "description"]);
+  const errors = customValidator(event, ["tagName", "description"]);
 
   if (errors.length)
     return badRequestResponse("missing mandetory fields", errors);
 
-  const { userId, tagName, description } = event;
-  if (userId != "1b77c729-8e04-41d2-ab58-23f7e2159522")
-    return badRequestResponse("you are not an admin");
+  const { tagName, description } = event;
 
   const params = {
     TableName: "TagsTable",
     Item: {
       tagName,
       description,
-      popularity: 0,
+      popularity: 1,
       isDeactivated: "false"
     }
   };
@@ -70,7 +68,7 @@ function createDefaultTags(event) {
 
   Tags.forEach(tag => {
     promises.push(
-      createTag({ userId, tagName: tag.tagName, description: tag.description })
+      createTag({ tagName: tag.tagName, description: tag.description })
     );
   });
 
@@ -108,7 +106,6 @@ function getPopularTags(event) {
 
   const params = {
     TableName: "TagsTable",
-    Limit: 50,
     ScanIndexForward: false,
     IndexName: "sortByPopularity",
     KeyConditionExpression: "isDeactivated = :isDeactivated",
@@ -288,15 +285,6 @@ async function followTagInBulk(event) {
   return Promise.all(promises)
     .then(() => okResponse("tags followed successfully"))
     .catch(err => internalServerError(err));
-
-  // try {
-  //   for (let i = 0; i < tagNames.length; i++) {
-  //     await followTag({ userId, tagName: tagNames[i] });
-  //   }
-  //   return okResponse("tags followed successfully");
-  // } catch (err) {
-  //   return internalServerError(err);
-  // }
 }
 
 module.exports = {

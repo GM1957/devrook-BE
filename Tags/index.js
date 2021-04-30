@@ -1,8 +1,5 @@
 const {
-  createTag,
   getTag,
-  increaseTagPopularity,
-  decreaseTagPopularity,
   followTag,
   followTagInBulk,
   unFollowTag,
@@ -15,23 +12,13 @@ const {
 } = require("../Utils/responseCodes").responseMessages;
 
 exports.main = async event => {
-  console.log("Input to the lambda", event);
+  console.log("Input to the Tags lambda", event);
 
   const { action } = event;
   delete event.action;
 
   if (action === "createDefaultTags") {
     return createDefaultTags(event);
-  } else if (action === "create") {
-    const { details } = event;
-
-    event = {
-      ...event,
-      ...details
-    };
-    delete event.details;
-
-    return createTag(event);
   } else if (action === "getTag") {
     return getTag(event);
   } else if (action === "getPopularTags") {
@@ -69,8 +56,6 @@ exports.main = async event => {
     delete event.details;
 
     return unFollowTag(event);
-  } else if (action === "increaseTagPopularity") {
-    return increaseTagPopularity(event.tagName);
   } else {
     return badRequestResponse(action);
   }

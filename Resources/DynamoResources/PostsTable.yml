@@ -2,6 +2,8 @@ Type: AWS::DynamoDB::Table
 Properties:
   TableName: PostsTable
   AttributeDefinitions:
+    - AttributeName: hashedUrl
+      AttributeType: S
     - AttributeName: userId
       AttributeType: S
     - AttributeName: createdAt
@@ -11,11 +13,17 @@ Properties:
     - AttributeName: isDeactivated
       AttributeType: S
   KeySchema:
-    - AttributeName: userId 
+    - AttributeName: hashedUrl 
       KeyType: HASH
-    - AttributeName: createdAt 
-      KeyType: RANGE
   GlobalSecondaryIndexes:
+    - IndexName: byUserId
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: createdAt 
+          KeyType: RANGE  
+      Projection:
+        ProjectionType: ALL    
     - IndexName: byPostType
       KeySchema:
         - AttributeName: postType

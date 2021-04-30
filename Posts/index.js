@@ -5,7 +5,7 @@ const {
 } = require("../Utils/responseCodes").responseMessages;
 
 exports.main = async event => {
-  console.log("Input to the lambda", event);
+  console.log("Input to the Posts lambda", event);
 
   const { action } = event;
   delete event.action;

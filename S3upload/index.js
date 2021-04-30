@@ -5,7 +5,7 @@ const {
 const { getPresignedUploadUrl } = require("./getPresignedUploadUrl");
 
 exports.main = async event => {
-  console.log("Input to the lambda", event);
+  console.log("Input to the S3Upload lambda", event);
 
   const { action } = event;
   delete event.action;

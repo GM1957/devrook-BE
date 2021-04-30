@@ -8,28 +8,6 @@ environment:
 name: Tags-${self:provider.stage}
 events:
   - http:
-      path: /tag
-      method: POST
-      cors: true
-      integration: lambda
-      authorizer:
-        name: cognitoAuthorizer
-        type: COGNITO_USER_POOLS
-        arn:
-          Fn::GetAtt:
-            - CognitoUserPool
-            - Arn
-      request:
-        passThrough: WHEN_NO_MATCH
-        template:
-          application/json: '{
-            "action": "create",
-            "userId": "$context.authorizer.claims.sub",
-            "details": $input.json("$")
-            }'
-      response: ${file(./Resources/LambdaResponses.yml)}
-
-  - http:
       path: /tag/create-default
       method: POST
       cors: true
