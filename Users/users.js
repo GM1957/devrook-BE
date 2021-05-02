@@ -245,7 +245,7 @@ async function updateUser(event) {
 
   const { userId } = event;
 
-  const user = await getUserByUserId({userId})
+  const user = await getUserByUserId({ userId });
 
   delete event.userId;
   if (event.email) delete event.email;
@@ -269,7 +269,7 @@ async function updateUser(event) {
   const params = {
     TableName: "UsersTable",
     Key: {
-      userId: userId,
+      userId: user.data[0].userId,
       createdAt: user.data[0].createdAt
     },
     UpdateExpression: updateExpression,

@@ -29,4 +29,20 @@ events:
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
 
+  - http:
+      path: /post/get-all/{post_type}/{fetch_limit}/{last_evaluated_key}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "getAllPosts",
+            "postType": "$input.params(''post_type'')",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
   

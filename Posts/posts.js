@@ -81,12 +81,13 @@ function createPost(event) {
         const promises = [];
 
         tags.forEach((tag) => {
-          promises.push(increaseTagPopularity(tag));
+          promises.push(increaseTagPopularity({ tagName: tag }));
+          promises.push(createTag({ tagName: tag }));
 
           const mappingParams = {
             TableName: "TagMappingTable",
             Item: {
-              tagName: tags,
+              tagName: tag,
               mappedWithId: hashedUrl,
               mappingType: postType,
               createdAt: new Date(Date.now()).toISOString(),
@@ -104,4 +105,30 @@ function createPost(event) {
     .catch((err) => internalServerError(err, `unable to create ${postType}`));
 }
 
-module.exports = { createPost };
+function getAllPosts(event) {
+  console.log("Inside getAllPosts function", event);
+
+  const { limit, LastEvaluatedKey, postType } = event;
+
+  const params = {
+    TableName: "PostsTable",
+    ScanIndexForward: false,
+    IndexName: "byPostType",
+    KeyConditionExpression: "postType = :postType",
+    ExpressionAttributeValues: {
+      ":postType": postType,
+    },
+  };
+
+  if (limit && limit != "false") {
+    params.Limit = limit;
+  }
+  if (LastEvaluatedKey && LastEvaluatedKey != "false") {
+    params.ExclusiveStartKey = LastEvaluatedKey;
+  }
+  return queryItemPaginated(params)
+    .then((result) => okResponse("fetched result", result))
+    .catch((err) => internalServerError(err, "failed to fetch data"));
+}
+
+module.exports = { createPost, getAllPosts };

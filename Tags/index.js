@@ -5,7 +5,8 @@ const {
   unFollowTag,
   createDefaultTags,
   getPopularTags,
-  createTag
+  createTag,
+  increaseTagPopularity
 } = require("./tags");
 
 const {

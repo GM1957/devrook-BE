@@ -30,9 +30,10 @@ async function createTag(event) {
 
   const tagCheck = await getTag({ tagName });
 
-  console.log("tagcheck", tagCheck)
+  console.log("tagcheck", tagCheck);
 
-  if(tagCheck.data.length) return badRequestResponse(`tag already exists tagName: ${tagName}`)
+  if (tagCheck.data.length)
+    return badRequestResponse(`tag already exists tagName: ${tagName}`);
 
   const params = {
     TableName: "TagsTable",
@@ -133,23 +134,27 @@ function getPopularTags(event) {
     .catch(err => internalServerError(err, "failed to fetch data"));
 }
 
-async function increaseTagPopularity(tagName) {
-  console.log("Inside increaseTagPopularity function", tagName);
-
+async function increaseTagPopularity(event) {
+  console.log("Inside increaseTagPopularity function", event);
+  const { tagName } = event;
   const tagDetails = await getTag({ tagName });
+
+  console.log("tagDetails from increase popularity", tagDetails);
 
   if (tagDetails.data.length) {
     const params = {
       TableName: "TagsTable",
       Key: {
-        tagName: tagName,
+        tagName: tagDetails.data[0].tagName,
         createdAt: tagDetails.data[0].createdAt
       },
       UpdateExpression: "set popularity = :popularity",
       ExpressionAttributeValues: {
-        ":popularity": tagDetails.data[0].popularity + 1
+        ":popularity": parseInt(tagDetails.data[0].popularity) + 1
       }
     };
+
+    console.log("update params for increase tag populatiry", params);
 
     return updateItem(params)
       .then(() => updateResponse(`tag popularity increased by 1 ${tagName}`))
@@ -162,8 +167,9 @@ async function increaseTagPopularity(tagName) {
   }
 }
 
-async function decreaseTagPopularity(tagName) {
-  console.log("Inside increaseTagPopularity function", tagName);
+async function decreaseTagPopularity(event) {
+  console.log("Inside increaseTagPopularity function", event);
+  const { tagName } = event;
 
   const tagDetails = await getTag({ tagName });
 
@@ -171,12 +177,12 @@ async function decreaseTagPopularity(tagName) {
     const params = {
       TableName: "TagsTable",
       Key: {
-        tagName: tagName,
+        tagName: tagDetails.data[0].tagName,
         createdAt: tagDetails.data[0].createdAt
       },
       UpdateExpression: "set popularity = :popularity",
       ExpressionAttributeValues: {
-        ":popularity": tagDetails.data[0].popularity - 1
+        ":popularity": parseInt(tagDetails.data[0].popularity) - 1
       }
     };
 
@@ -215,7 +221,7 @@ function followTag(event) {
   };
 
   promises.push(putItem(mappingParams));
-  promises.push(increaseTagPopularity(tagName));
+  promises.push(increaseTagPopularity({ tagName }));
 
   return Promise.all(promises)
     .then(() => {

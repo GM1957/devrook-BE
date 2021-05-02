@@ -1,0 +1,4 @@
+{
+    "action": "getAllPosts",
+    "postType": "question"
+}

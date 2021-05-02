@@ -1,10 +1,10 @@
-const { createPost } = require("./posts");
+const { createPost, getAllPosts } = require("./posts");
 
 const {
-  badRequestResponse
+  badRequestResponse,
 } = require("../Utils/responseCodes").responseMessages;
 
-exports.main = async event => {
+exports.main = async (event) => {
   console.log("Input to the Posts lambda", event);
 
   const { action } = event;
@@ -17,12 +17,14 @@ exports.main = async event => {
 
     event = {
       ...event,
-      ...details
+      ...details,
     };
 
     delete event.details;
 
     return createPost(event);
+  } else if (action === "getAllPosts") {
+    return getAllPosts(event);
   } else {
     return badRequestResponse("action not found", action);
   }
