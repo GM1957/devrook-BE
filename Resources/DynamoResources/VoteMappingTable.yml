@@ -6,17 +6,27 @@ Properties:
       AttributeType: S
     - AttributeName: voteId
       AttributeType: S
+    - AttributeName: createdAt
+      AttributeType: S
   KeySchema:
     - AttributeName: voteId 
       KeyType: HASH
     - AttributeName: createdAt 
       KeyType: RANGE
   GlobalSecondaryIndexes:
+    - IndexName: byVoteAndUserId
+      KeySchema:
+        - AttributeName: voteId
+          KeyType: HASH
+        - AttributeName: userId
+          KeyType: RANGE
+      Projection:
+        ProjectionType: ALL      
     - IndexName: byUserId
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
-        - AttributeName: voteId
+        - AttributeName: createdAt
           KeyType: RANGE
       Projection:
         ProjectionType: ALL      

@@ -8,6 +8,8 @@ const {
 
 const Tags = require("./allTags.json");
 
+const { getUserByUserId } = require("../Users/users");
+
 const {
   createResponse,
   updateResponse,
@@ -197,7 +199,7 @@ async function decreaseTagPopularity(event) {
   }
 }
 
-function followTag(event) {
+async function followTag(event) {
   console.log("Inside followTag function", event);
 
   const errors = customValidator(event, ["userId", "tagName"]);
@@ -207,20 +209,26 @@ function followTag(event) {
 
   const { userId, tagName } = event;
 
+  const user = await getUserByUserId({ userId });
+
   const promises = [];
 
-  const mappingParams = {
-    TableName: "TagMappingTable",
-    Item: {
-      tagName,
-      mappedWithId: userId,
-      mappingType: "User",
-      createdAt: new Date(Date.now()).toISOString(),
-      isDeactivated: "false"
-    }
+  let updatedTags = { ...user.data[0].tags };
+
+  updatedTags[tagName] = "1";
+
+  const followTagParams = {
+    TableName: "UsersTable",
+    Key: {
+      userId: user.data[0].userId,
+      createdAt: user.data[0].createdAt
+    },
+    UpdateExpression: "set tags = :tags",
+    ExpressionAttributeValues: { tags: updatedTags }
   };
 
-  promises.push(putItem(mappingParams));
+  promises.push(updateItem(followTagParams));
+
   promises.push(increaseTagPopularity({ tagName }));
 
   return Promise.all(promises)
@@ -242,32 +250,31 @@ async function unFollowTag(event) {
 
   const { userId, tagName } = event;
 
+  const user = await getUserByUserId({ userId });
+
   const promises = [];
 
-  const findMapParams = {
-    TableName: "TagMappingTable",
-    KeyConditionExpression: "userId = :userId And tagName = :tagName",
-    ExpressionAttributeValues: {
-      ":userId": userId,
-      ":tagName": tagName
-    }
-  };
+  let updatedTags = { ...user.data[0].tags };
 
-  const mapDetails = await queryItem(findMapParams);
-
-  if (!mapdetails.length)
+  if (!updatedTags[tagName])
     return badRequestResponse(
-      `no mapped details found with tag name: ${tagName} and user id : ${userId}`
+      `no tag name was followed tag-name: ${tagName} and user-id : ${userId}`
     );
 
-  const mapDeleteParams = {
-    TableName: "TagMappingTable",
+  delete updatedTags[tagName];
+
+  const unFollowTagParams = {
+    TableName: "UsersTable",
     Key: {
-      tagName,
-      createdAt: mapDetails[0].createdAt
-    }
+      userId: user.data[0].userId,
+      createdAt: user.data[0].createdAt
+    },
+    UpdateExpression: "set tags = :tags",
+    ExpressionAttributeValues: { tags: updatedTags }
   };
-  promises.push(deleteItem(mapDeleteParams));
+
+  promises.push(updateItem(unFollowTagParams));
+
   promises.push(decreaseTagPopularity({ tagName }));
 
   return Promise.all(promises)

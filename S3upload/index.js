@@ -12,7 +12,9 @@ exports.main = async event => {
 
   if (action === "getPresignedUploadUrl") {
     const { details } = event;
-    if (details.userId) delete details.userId;
+    if (details) {
+      if (details.userId) delete details.userId;
+    }
     event = {
       ...event,
       ...details

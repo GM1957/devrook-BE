@@ -18,6 +18,14 @@ Properties:
     - AttributeName: createdAt
       KeyType: RANGE
   GlobalSecondaryIndexes:
+    - IndexName: byHasedUrlAndUserId
+      KeySchema:
+        - AttributeName: hashedUrl
+          KeyType: HASH
+        - AttributeName: userId 
+          KeyType: RANGE  
+      Projection:
+        ProjectionType: ALL    
     - IndexName: byUserId
       KeySchema:
         - AttributeName: userId

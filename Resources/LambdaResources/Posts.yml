@@ -30,6 +30,96 @@ events:
       response: ${file(./Resources/LambdaResponses.yml)}
 
   - http:
+      path: /post/get-personalized-posts/{post_type}/{fetch_limit}/{last_evaluated_key}
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "getPersonalizedPosts",
+            "userId": "$context.authorizer.claims.sub",
+            "postType": "$input.params(''post_type'')",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
+      path: /post
+      method: PUT
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "updatePost",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
+      path: /post/vote-post
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "votePost",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
+      path: /post
+      method: DELETE
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "deletePost",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
       path: /post/get-all/{post_type}/{fetch_limit}/{last_evaluated_key}
       method: GET
       cors: true
@@ -42,6 +132,20 @@ events:
             "postType": "$input.params(''post_type'')",
             "limit": "$input.params(''fetch_limit'')",
             "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
+      path: /post/get-full/{post_url}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "getFullPost",
+            "posturl": "$input.params(''post_url'')"
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
 

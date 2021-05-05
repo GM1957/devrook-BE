@@ -1,4 +1,4 @@
 {
-    "action": "getAllPosts",
-    "postType": "question"
+  "action": "getAllPosts",
+  "postType": "question"
 }

@@ -28,7 +28,9 @@ exports.main = async event => {
   } else if (action === "followTag") {
     const { details } = event;
 
-    if (details.userId) delete details.userId;
+    if (details) {
+      if (details.userId) delete details.userId;
+    }
 
     event = {
       ...event,
@@ -41,7 +43,9 @@ exports.main = async event => {
   } else if (action === "followTagInBulk") {
     const { details } = event;
 
-    if (details.userId) delete details.userId;
+    if (details) {
+      if (details.userId) delete details.userId;
+    }
 
     event = {
       ...event,
@@ -54,7 +58,9 @@ exports.main = async event => {
   } else if (action === "unFollowTag") {
     const { details } = event;
 
-    if (details.userId) delete details.userId;
+    if (details) {
+      if (details.userId) delete details.userId;
+    }
 
     event = {
       ...event,

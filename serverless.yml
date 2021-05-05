@@ -57,9 +57,8 @@ resources:
     # >>>>>>>>>>--DYNAMO DB TABLES--<<<<<<<<<<< #
     UsersTable: ${file(./Resources/DynamoResources/UsersTable.yml)}
     TagsTable: ${file(./Resources/DynamoResources/TagsTable.yml)}
-    TagMappingTable: ${file(./Resources/DynamoResources/TagMappingTable.yml)}
     FollowUserMappingTable: ${file(./Resources/DynamoResources/FollowUserMappingTable.yml)}
-    # VoteMappingTable: ${file(./Resources/DynamoResources/VoteMappingTable.yml)}
+    VoteMappingTable: ${file(./Resources/DynamoResources/VoteMappingTable.yml)}
     PostsTable: ${file(./Resources/DynamoResources/PostsTable.yml)}
 
   Outputs:

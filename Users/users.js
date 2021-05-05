@@ -188,7 +188,8 @@ async function createUser(event) {
     profession,
     linkedinLink,
     githubLink,
-    twitterLink
+    twitterLink,
+    tags
   } = event;
 
   const userNameValidationResult = await getUserByUserName(event);
@@ -215,6 +216,7 @@ async function createUser(event) {
       followers: 0,
       following: 0,
       reputation: 10,
+      tags: tags ? tags : {},
       createdAt: new Date(Date.now()).toISOString(),
       isDeactivated: "false"
     }
@@ -250,9 +252,18 @@ async function updateUser(event) {
   delete event.userId;
   if (event.email) delete event.email;
   if (event.createdAt) delete event.createdAt;
+  if (event.isDeactivated) delete event.isDeactivated;
   if (event.reputation) delete evemt.reputation;
   if (event.followers) delete event.followers;
   if (event.following) delete event.following;
+  if (event.tags) delete event.tags;
+
+  const eventArr = Objects.keys(event);
+  const userArr = Objects.keys(post[0]);
+
+  eventArr.forEach(item => {
+    if (!userArr.includes(item)) delete event[item];
+  });
 
   let updateExpression = "set";
   let ExpressionAttributeNames = {};
@@ -326,6 +337,8 @@ function topReputedUsers(event) {
     TableName: "UsersTable",
     ScanIndexForward: false,
     IndexName: "sortByReputation",
+    ProjectionExpression: "userName, #n,  profilePicture, reputation",
+    ExpressionAttributeNames: { "#n": "name" },
     KeyConditionExpression: "isDeactivated = :isDeactivated",
     ExpressionAttributeValues: {
       ":isDeactivated": "false"
@@ -516,11 +529,11 @@ function myFollowers(event) {
       const followedByIds = result.map(ele => ele.followedById);
       const expression = await expressionValueGeneratorFornIN(followedByIds);
 
+      // TODO TRY TO COVERT IT IN STRINGS WITH JOIN(",") AND DIRECTLY PUT THE VALUES IN KeyConditionExpression
       const userQueryParams = {
         TableName: "UsersTable",
-        ProjectionExpression:
-          "userName, email, #n, #l, bio, profession,  profilePicture, linkedinLink, githubLink, twitterLink, followers, following, reputation, createdAt",
-        ExpressionAttributeNames: { "#n": "name", "#l": "location" },
+        ProjectionExpression: "userName, #n",
+        ExpressionAttributeNames: { "#n": "name" },
         KeyConditionExpression: `userId IN (${expression.expressions})`,
         ExpressionAttributeValues: expression.ExpressionAttributeValues
       };
