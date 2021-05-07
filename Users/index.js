@@ -5,8 +5,9 @@ const {
   getUserByUserNamePublicUse,
   getUserByUserId,
   topReputedUsers,
-  followUser,
   followUserInBulk,
+  getUserPreviousVotes,
+  followUser,
   unFollowUser,
   usersIFollow,
   myFollowers
@@ -47,14 +48,6 @@ exports.main = async event => {
     delete event.details;
 
     return updateUser(event);
-  } else if (action === "delete") {
-    return deleteUser(event);
-  } else if (action === "getUserByUserName") {
-    return getUserByUserNamePublicUse(event);
-  } else if (action === "getUserByUserId") {
-    return getUserByUserId(event);
-  } else if (action === "topReputedUsers") {
-    return topReputedUsers(event);
   } else if (action === "followUserInBulk") {
     const { details } = event;
     if (details) {
@@ -67,6 +60,26 @@ exports.main = async event => {
 
     delete event.details;
     return followUserInBulk(event);
+  } else if (action === "getUserPreviousVotes") {
+    const { details } = event;
+    if (details) {
+      if (details.userId) delete details.userId;
+    }
+    event = {
+      ...event,
+      ...details
+    };
+
+    delete event.details;
+    return getUserPreviousVotes(event);
+  } else if (action === "delete") {
+    return deleteUser(event);
+  } else if (action === "getUserByUserName") {
+    return getUserByUserNamePublicUse(event);
+  } else if (action === "getUserByUserId") {
+    return getUserByUserId(event);
+  } else if (action === "topReputedUsers") {
+    return topReputedUsers(event);
   } else {
     return badRequestResponse(action);
   }

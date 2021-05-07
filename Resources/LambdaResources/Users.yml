@@ -142,4 +142,26 @@ events:
             "followedById": "$context.authorizer.claims.sub",
             "details": $input.json("$")
             }'
+      response: ${file(./Resources/LambdaResponses.yml)}   
+
+  - http:
+      path: /user/get-user-previous-votes
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "getUserPreviousVotes",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
       response: ${file(./Resources/LambdaResponses.yml)}      

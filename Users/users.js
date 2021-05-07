@@ -610,6 +610,38 @@ async function followUserInBulk(event) {
   }
 }
 
+function getUserPreviousVotes(event) {
+  console.log("Inside getUserPrevVotes", event);
+
+  const errors = customValidator(event, ["voteIds", "userId"]);
+  if (errors.length)
+    return badRequestResponse("missing mandetory fields", errors);
+
+  const { voteIds, userId } = event;
+
+  if (!voteIds.length)
+    return badRequestResponse("Empty voteIds array", voteIds);
+
+  const promises = [];
+
+  voteIds.forEach(voteId => {
+    const params = {
+      TableName: "VoteMappingTable",
+      IndexName: "byVoteAndUserId",
+      KeyConditionExpression: "voteId = :voteId AND userId = :userId",
+      ExpressionAttributeValues: {
+        ":voteId": voteId,
+        ":userId": userId
+      }
+    };
+    promises.push(queryItem(params));
+  });
+
+  return Promise.all(promises)
+    .then(result => okResponse("previous voting details", result))
+    .catch(err => internalServerError(err));
+}
+
 module.exports = {
   createUser,
   updateUser,
@@ -621,5 +653,6 @@ module.exports = {
   followUserInBulk,
   unFollowUser,
   usersIFollow,
-  myFollowers
+  myFollowers,
+  getUserPreviousVotes
 };

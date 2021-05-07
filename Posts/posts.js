@@ -214,6 +214,8 @@ async function updatePost(event) {
 function getAllPosts(event) {
   console.log("Inside getAllPosts function", event);
 
+  if (event.postType === "false") delete event.postType;
+
   const { limit, LastEvaluatedKey, postType } = event;
 
   const params = {
@@ -260,6 +262,8 @@ async function getPersonalizedPosts(event) {
 
   if (errors.length)
     return badRequestResponse("missing mandetory fields", errors);
+
+  if (event.postType === "false") delete event.postType;
 
   const { userId, limit, LastEvaluatedKey, postType } = event;
 
