@@ -17,6 +17,34 @@ function queryItem(params) {
   );
 }
 
+// Function to get multiple data at a time with multiple hash keys
+function batchGetItem(params) {
+  return new Promise((resolve, reject) =>
+    DBClient.batchGet(params, function(error, data) {
+      if (error) {
+        console.log(error);
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    })
+  );
+}
+
+// Function to put multiple data at a time
+function batchWriteItem(params) {
+  return new Promise((resolve, reject) =>
+    DBClient.batchWrite(params, function(error, data) {
+      if (error) {
+        console.log(error);
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    })
+  );
+}
+
 //Function for Paginated Querying Item From DynamoDB
 function queryItemPaginated(params) {
   return new Promise((resolve, reject) =>
@@ -133,6 +161,8 @@ module.exports = {
   DBClient,
   filterItem,
   queryItem,
+  batchGetItem,
+  batchWriteItem,
   putItem,
   updateItem,
   deleteItem,

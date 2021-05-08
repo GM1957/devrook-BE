@@ -167,7 +167,10 @@ async function updatePost(event) {
   };
 
   const post = await queryItem(getPostParams);
-  if (!post.length) return badRequestResponse("post not found");
+  if (!post.length)
+    return badRequestResponse(
+      "post not found or you are not admin of the post"
+    );
 
   const eventArr = Objects.keys(event);
   const postArr = Objects.keys(post[0]);
@@ -191,8 +194,7 @@ async function updatePost(event) {
   const params = {
     TableName: "PostsTable",
     Key: {
-      userId: post[0].hashedUrl,
-      createdAt: post[0].createdAt
+      userId: post[0].hashedUrl
     },
     UpdateExpression: updateExpression,
     ExpressionAttributeNames: ExpressionAttributeNames,
@@ -337,7 +339,10 @@ async function deletePost(event) {
   };
 
   const post = await queryItem(getPostParams);
-  if (!post.length) return badRequestResponse("post not found");
+  if (!post.length)
+    return badRequestResponse(
+      "post not found or you are not admin of the post"
+    );
 
   if (post[0].postType === "question" && post[0].responses > 1)
     return badRequestResponse(
@@ -432,8 +437,7 @@ async function votePost(event) {
   const updatePostParams = {
     TableName: "PostsTable",
     Key: {
-      hashedUrl: postDetails[0].hashedUrl,
-      createdAt: postDetails[0].createdAt
+      hashedUrl: postDetails[0].hashedUrl
     },
     UpdateExpression: "set #name = :newValue",
     ExpressionAttributeNames: { "#name": voteType },
