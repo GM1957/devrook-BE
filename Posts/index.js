@@ -5,14 +5,16 @@ const {
   getFullPost,
   updatePost,
   deletePost,
-  votePost
+  votePost,
+  devFeed,
+  devFeedPublic,
 } = require("./posts");
 
 const {
-  badRequestResponse
+  badRequestResponse,
 } = require("../Utils/responseCodes").responseMessages;
 
-exports.main = async event => {
+exports.main = async (event) => {
   console.log("Input to the Posts lambda", event);
 
   const { action } = event;
@@ -27,7 +29,7 @@ exports.main = async event => {
 
     event = {
       ...event,
-      ...details
+      ...details,
     };
 
     delete event.details;
@@ -42,7 +44,7 @@ exports.main = async event => {
 
     event = {
       ...event,
-      ...details
+      ...details,
     };
 
     delete event.details;
@@ -57,7 +59,7 @@ exports.main = async event => {
 
     event = {
       ...event,
-      ...details
+      ...details,
     };
 
     delete event.details;
@@ -71,6 +73,22 @@ exports.main = async event => {
     return getFullPost(event);
   } else if (action === "deletePost") {
     return deletePost(event);
+  } else if (action === "devFeed") {
+    const { details } = event;
+
+    if (details) {
+      if (details.userId) delete details.userId;
+    }
+
+    event = {
+      ...event,
+      ...details,
+    };
+
+    delete event.details;
+    return devFeed(event);
+  } else if (action === "devFeedPublic") {
+    return devFeedPublic(event);
   } else {
     return badRequestResponse("action not found", action);
   }

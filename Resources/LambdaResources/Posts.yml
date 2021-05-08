@@ -98,6 +98,28 @@ events:
       response: ${file(./Resources/LambdaResponses.yml)}
 
   - http:
+      path: /post/dev-feed
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "devFeed",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
       path: /post
       method: DELETE
       cors: true
@@ -136,6 +158,21 @@ events:
       response: ${file(./Resources/LambdaResponses.yml)}
 
   - http:
+      path: /post/dev-feed-public/{fetch_limit}/{last_evaluated_key}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "devFeedPublic",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
       path: /post/get-full/{post_url}
       method: GET
       cors: true
@@ -148,5 +185,6 @@ events:
             "posturl": "$input.params(''post_url'')"
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
+
 
   
