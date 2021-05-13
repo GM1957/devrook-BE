@@ -1,0 +1,6 @@
+handler: AuthWebSocket/index.main
+package:
+  individually: true
+  artifact: "./dist/AuthWebSocket.zip"
+name: AuthWebSocket-${self:provider.stage}
+cors: true

@@ -3,10 +3,13 @@ const path = require("path");
 
 const config = {
   entry: {
+    QueryTester: "./QueryTester/index.js",
     Users: "./Users/index.js",
     Tags: "./Tags/index.js",
     S3upload: "./S3upload/index.js",
-    Posts: "./Posts/index.js"
+    Posts: "./Posts/index.js",
+    WebSockets: "./WebSockets/index.js",
+    AuthWebSocket: "./AuthWebSocket/index.js"
   },
   output: {
     filename: "[name]/index.js",

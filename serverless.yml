@@ -13,6 +13,9 @@ provider:
     SERVICE_NAME: "${self:service}-${self:provider.stage}"
     STAGE: "${self:provider.stage, dev}"
     REDIRECT_URL_AFTER_AUTHENTICATION: ${self:custom.REDIRECT_URL_AFTER_AUTHENTICATION.${opt:stage, dev}}
+    COGNITO_USER_POOL_CLIENT: 
+      Ref: CognitoUserPoolClient
+    KEYS_URL: !Join ['', ['https://cognito-idp.', '${opt:region, self:provider.region}', '.amazonaws.com/', !Ref CognitoUserPool, '/.well-known/jwks.json']]
     s3MainBucket: ${self:custom.s3MainBucket}
   iamRoleStatements: ${file(./Resources/LambdaRole.yml)}
 
@@ -33,10 +36,13 @@ custom:
   s3MainBucket: "${self:provider.stage}-${self:service}-main-bucket"
 
 functions:
+  QueryTester: ${file(./Resources/LambdaResources/QueryTester.yml)}
   Users: ${file(./Resources/LambdaResources/Users.yml)}
   Tags: ${file(./Resources/LambdaResources/Tags.yml)}
   S3upload: ${file(./Resources/LambdaResources/S3upload.yml)}
   Posts: ${file(./Resources/LambdaResources/Posts.yml)}
+  WebSockets: ${file(./Resources/LambdaResources/WebSockets.yml)}
+  AuthWebSocket: ${file(./Resources/LambdaResources/AuthWebSocket.yml)}
 
 resources:
   Resources:
@@ -60,6 +66,8 @@ resources:
     FollowUserMappingTable: ${file(./Resources/DynamoResources/FollowUserMappingTable.yml)}
     VoteMappingTable: ${file(./Resources/DynamoResources/VoteMappingTable.yml)}
     PostsTable: ${file(./Resources/DynamoResources/PostsTable.yml)}
+    WebSocketUserTable: ${file(./Resources/DynamoResources/WebSocketUserTable.yml)}
+    MessageTable: ${file(./Resources/DynamoResources/MessageTable.yml)}
 
   Outputs:
     CognitoUserPoolId:

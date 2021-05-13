@@ -1,0 +1,22 @@
+handler: WebSockets/index.main
+package:
+  individually: true
+  artifact: "./dist/WebSockets.zip"
+environment:
+  USER_POOL_ID:
+    Ref: CognitoUserPool
+name: WebSockets-${self:provider.stage}
+events:
+  - websocket:
+      route: $connect
+      # web sockets not directly supports cognito authorizer you have to make one and use it 
+      authorizer:
+        name: AuthWebSocket
+        identitySource:
+          - 'route.request.querystring.Authorizer'
+  - websocket:
+      route: $disconnect     
+  - websocket:
+      route: $default    
+  - websocket:
+      route: message    

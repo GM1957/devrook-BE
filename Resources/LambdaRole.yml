@@ -20,3 +20,13 @@
   Action:
     - "dynamodb:*"
   Resource: "*"  
+- Effect: Allow
+  Action:
+    - "execute-api:ManageConnections"
+  Resource:
+    - "arn:aws:execute-api:*:*:**/@connections/*"  
+- Effect: Allow
+  Action:
+    - "execute-api:Invoke"
+  Resource:
+    - "*"  

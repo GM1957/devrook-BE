@@ -280,8 +280,7 @@ async function updateUser(event) {
   const params = {
     TableName: "UsersTable",
     Key: {
-      userId: user.data[0].userId,
-      createdAt: user.data[0].createdAt
+      userId: user.data[0].userId
     },
     UpdateExpression: updateExpression,
     ExpressionAttributeNames: ExpressionAttributeNames,
@@ -394,8 +393,7 @@ async function followUser(event) {
   const increaseReputationAndFollowerParams = {
     TableName: "UsersTable",
     Key: {
-      userId: user.data[0].userId,
-      createdAt: user.data[0].createdAt
+      userId: user.data[0].userId
     },
     UpdateExpression: "set reputation = :reputation, followers = :followers",
     ExpressionAttributeValues: {
@@ -409,8 +407,7 @@ async function followUser(event) {
   const increaseFollowingParams = {
     TableName: "UsersTable",
     Key: {
-      userId: followedByUser.data[0].userId,
-      createdAt: followedByUser.data[0].createdAt
+      userId: followedByUser.data[0].userId
     },
     UpdateExpression: "set following = :following",
     ExpressionAttributeValues: {
@@ -474,8 +471,7 @@ async function unFollowUser(event) {
   const decreaseFollowerParams = {
     TableName: "UsersTable",
     Key: {
-      userId: user.data[0].userId,
-      createdAt: user.data[0].createdAt
+      userId: user.data[0].userId
     },
     UpdateExpression: "set reputation = :reputation, followers = :followers",
     ExpressionAttributeValues: {
@@ -489,8 +485,7 @@ async function unFollowUser(event) {
   const decreaseFollowingParams = {
     TableName: "UsersTable",
     Key: {
-      userId: followedByUser.data[0].userId,
-      createdAt: followedByUser.data[0].createdAt
+      userId: followedByUser.data[0].userId
     },
     UpdateExpression: "set following = :following",
     ExpressionAttributeValues: {
@@ -529,7 +524,6 @@ function myFollowers(event) {
       const followedByIds = result.map(ele => ele.followedById);
       const expression = await expressionValueGeneratorFornIN(followedByIds);
 
-      // TODO TRY TO COVERT IT IN STRINGS WITH JOIN(",") AND DIRECTLY PUT THE VALUES IN KeyConditionExpression
       const userQueryParams = {
         TableName: "UsersTable",
         ProjectionExpression: "userName, #n",

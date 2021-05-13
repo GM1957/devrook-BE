@@ -220,8 +220,7 @@ async function followTag(event) {
   const followTagParams = {
     TableName: "UsersTable",
     Key: {
-      userId: user.data[0].userId,
-      createdAt: user.data[0].createdAt
+      userId: user.data[0].userId
     },
     UpdateExpression: "set tags = :tags",
     ExpressionAttributeValues: { tags: updatedTags }
@@ -266,8 +265,7 @@ async function unFollowTag(event) {
   const unFollowTagParams = {
     TableName: "UsersTable",
     Key: {
-      userId: user.data[0].userId,
-      createdAt: user.data[0].createdAt
+      userId: user.data[0].userId
     },
     UpdateExpression: "set tags = :tags",
     ExpressionAttributeValues: { tags: updatedTags }

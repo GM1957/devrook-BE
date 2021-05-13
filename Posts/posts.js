@@ -3,7 +3,7 @@ const uuid = require("uuid");
 const { createTag, increaseTagPopularity } = require("../Tags/tags");
 const { getUserByUserId } = require("../Users/users");
 const {
-  containsExpresseionGeneratorForOR,
+  containsExpresseionGeneratorForOR
 } = require("../Utils/containsExpresseionGeneratorForOR");
 
 const {
@@ -11,7 +11,7 @@ const {
   updateItem,
   deleteItem,
   queryItem,
-  queryItemPaginated,
+  queryItemPaginated
 } = require("../Utils/DBClient");
 
 const {
@@ -20,7 +20,7 @@ const {
   okResponse,
   deleteResponse,
   internalServerError,
-  badRequestResponse,
+  badRequestResponse
 } = require("../Utils/responseCodes").responseMessages;
 
 const { customValidator } = require("../Utils/customValidator");
@@ -32,7 +32,7 @@ function createPost(event) {
     "userId",
     "postType",
     "title",
-    "tags",
+    "tags"
   ]);
 
   if (firstStageErrors.length)
@@ -55,7 +55,7 @@ function createPost(event) {
 
   let hashedUrl = "";
 
-  titleArr.forEach((ele) => {
+  titleArr.forEach(ele => {
     if (ele.length) hashedUrl += ele + "-";
   });
 
@@ -76,8 +76,8 @@ function createPost(event) {
       like: 0,
       responses: 0,
       createdAt: new Date(Date.now()).toISOString(),
-      isDeactivated: "false",
-    },
+      isDeactivated: "false"
+    }
   };
 
   return putItem(params)
@@ -86,7 +86,7 @@ function createPost(event) {
         const promises = [];
         const filterArr = [];
 
-        tags.forEach((tag) => {
+        tags.forEach(tag => {
           if (!filterArr.includes(tag)) {
             promises.push(increaseTagPopularity({ tagName: tag }));
             promises.push(createTag({ tagName: tag }));
@@ -99,7 +99,7 @@ function createPost(event) {
       }
       return createResponse(`${postType} created successfully`);
     })
-    .catch((err) => internalServerError(err, `unable to create ${postType}`));
+    .catch(err => internalServerError(err, `unable to create ${postType}`));
 }
 
 async function getFullPost(event) {
@@ -116,8 +116,8 @@ async function getFullPost(event) {
     TableName: "PostsTable",
     KeyConditionExpression: "hashedUrl = :hashedUrl",
     ExpressionAttributeValues: {
-      ":hashedUrl": postUrl,
-    },
+      ":hashedUrl": postUrl
+    }
   };
 
   const post = await queryItem(postParams);
@@ -162,8 +162,8 @@ async function updatePost(event) {
     KeyConditionExpression: "hashedUrl = :hashedUrl AND userId = :userId",
     ExpressionAttributeValues: {
       ":hashedUrl": postUrl,
-      ":userId": userId,
-    },
+      ":userId": userId
+    }
   };
 
   const post = await queryItem(getPostParams);
@@ -172,7 +172,7 @@ async function updatePost(event) {
   const eventArr = Objects.keys(event);
   const postArr = Objects.keys(post[0]);
 
-  eventArr.forEach((item) => {
+  eventArr.forEach(item => {
     if (!postArr.includes(item)) delete event[item];
   });
 
@@ -192,18 +192,18 @@ async function updatePost(event) {
     TableName: "PostsTable",
     Key: {
       userId: post[0].hashedUrl,
-      createdAt: post[0].createdAt,
+      createdAt: post[0].createdAt
     },
     UpdateExpression: updateExpression,
     ExpressionAttributeNames: ExpressionAttributeNames,
-    ExpressionAttributeValues: ExpressionAttributeValues,
+    ExpressionAttributeValues: ExpressionAttributeValues
   };
 
   return updateItem(params)
     .then(() =>
       updateResponse(`post update successfully of the title ${postUrl}`)
     )
-    .catch((err) =>
+    .catch(err =>
       internalServerError(
         err,
         `unable to update the post with post title : ${postUrl}`
@@ -230,18 +230,18 @@ function getAllPosts(event) {
       "#tg": "tag",
       "#ti": "title",
       "#lk": "like",
-      "#rs": "responses",
+      "#rs": "responses"
     },
     KeyConditionExpression: postType
       ? "postType = :postType"
       : "isDeactivated = :isDeactivated",
     ExpressionAttributeValues: postType
       ? {
-          ":postType": postType,
+          ":postType": postType
         }
       : {
-          ":isDeactivated": "false",
-        },
+          ":isDeactivated": "false"
+        }
   };
 
   if (limit && limit != "false") {
@@ -251,8 +251,8 @@ function getAllPosts(event) {
     params.ExclusiveStartKey = LastEvaluatedKey;
   }
   return queryItemPaginated(params)
-    .then((result) => okResponse("fetched result", result))
-    .catch((err) => internalServerError(err, "failed to fetch data"));
+    .then(result => okResponse("fetched result", result))
+    .catch(err => internalServerError(err, "failed to fetch data"));
 }
 
 async function getPersonalizedPosts(event) {
@@ -287,7 +287,7 @@ async function getPersonalizedPosts(event) {
       "#tg": "tag",
       "#ti": "title",
       "#lk": "like",
-      "#rs": "responses",
+      "#rs": "responses"
     },
     ScanIndexForward: false,
     FilterExpression: expressions.expression,
@@ -297,12 +297,12 @@ async function getPersonalizedPosts(event) {
     ExpressionAttributeValues: postType
       ? {
           ...expressions.values,
-          ":postType": postType,
+          ":postType": postType
         }
       : {
           ...expressions.values,
-          ":isDeactivated": "false",
-        },
+          ":isDeactivated": "false"
+        }
   };
 
   if (limit && limit != "false") {
@@ -312,8 +312,8 @@ async function getPersonalizedPosts(event) {
     params.ExclusiveStartKey = LastEvaluatedKey;
   }
   return queryItemPaginated(params)
-    .then((result) => okResponse("fetched result", result))
-    .catch((err) => internalServerError(err, "failed to fetch data"));
+    .then(result => okResponse("fetched result", result))
+    .catch(err => internalServerError(err, "failed to fetch data"));
 }
 
 async function deletePost(event) {
@@ -332,8 +332,8 @@ async function deletePost(event) {
     KeyConditionExpression: "hashedUrl = :hashedUrl AND userId = :userId",
     ExpressionAttributeValues: {
       ":hashedUrl": postUrl,
-      ":userId": userId,
-    },
+      ":userId": userId
+    }
   };
 
   const post = await queryItem(getPostParams);
@@ -348,15 +348,15 @@ async function deletePost(event) {
     TableName: "PostsTable",
     Key: {
       hashedUrl: post[0].hashedUrl,
-      createdAt: post[0].createdAt,
-    },
+      createdAt: post[0].createdAt
+    }
   };
 
   return deleteItem(deletePostParams)
     .then(() =>
       deleteResponse(`post deleted successfully with the postId: ${postUrl}`)
     )
-    .catch((err) =>
+    .catch(err =>
       internalServerError(
         err,
         `unable to delete the post with the postId : ${postUrl}`
@@ -382,16 +382,16 @@ async function votePost(event) {
     ExpressionAttributeValues: {
       ":voteId": postUrl,
       ":userId": userId,
-      ":voteType": voteType,
-    },
+      ":voteType": voteType
+    }
   };
 
   const postParams = {
     TableName: "PostsTable",
     KeyConditionExpression: "hashedUrl = :hashedUrl",
     ExpressionAttributeValues: {
-      ":hashedUrl": postUrl,
-    },
+      ":hashedUrl": postUrl
+    }
   };
 
   const prevVotingDetails = await queryItem(voteMappingQueryParams);
@@ -408,8 +408,8 @@ async function votePost(event) {
         voteType,
         voteId: postUrl,
         createdAt: new Date(Date.now()).toISOString(),
-        isDeactivated: "false",
-      },
+        isDeactivated: "false"
+      }
     };
     promises.push(putItem(voteMappingInsertParams));
 
@@ -420,8 +420,8 @@ async function votePost(event) {
       TableName: "VoteMappingTable",
       Key: {
         voteId: prevVotingDetails[0].voteId,
-        createdAt: prevVotingDetails[0].createdAt,
-      },
+        createdAt: prevVotingDetails[0].createdAt
+      }
     };
     promises.push(deleteItem(voteMappingDeleteParams));
 
@@ -433,18 +433,18 @@ async function votePost(event) {
     TableName: "PostsTable",
     Key: {
       hashedUrl: postDetails[0].hashedUrl,
-      createdAt: postDetails[0].createdAt,
+      createdAt: postDetails[0].createdAt
     },
     UpdateExpression: "set #name = :newValue",
     ExpressionAttributeNames: { "#name": voteType },
-    ExpressionAttributeValues: ExpressionAttributeValues,
+    ExpressionAttributeValues: ExpressionAttributeValues
   };
 
   promises.push(updateItem(updatePostParams));
 
   return Promise.all(promises)
     .then(() => okResponse(`${voteType} : of ${postUrl} has done successfully`))
-    .catch((err) =>
+    .catch(err =>
       internalServerError(err, `unable to to ${voteType} the ${postUrl}`)
     );
 }
@@ -464,9 +464,9 @@ async function devFeed(event) {
     IndexName: "byFollowedById",
     ScanIndexForward: false,
     KeyConditionExpression: "followedById = :userId",
-    ExpressionAttributeNames: {
-      ":userId": userId,
-    },
+    ExpressionAttributeValues: {
+      ":userId": userId
+    }
   };
 
   if (limit && limit != "false") {
@@ -483,12 +483,14 @@ async function devFeed(event) {
 
   const promises = [];
 
-  result.Items.forEach((item) => {
+  // or what we can do is get the recent posts first and then filter them by users i follow
+
+  result.Items.forEach(item => {
     const queryParams = {
       TableName: "PostsTable",
       IndexName: "byUserId",
       ScanIndexForward: false,
-      Limit: result.length < 4 ? 3 : 1,
+      Limit: result.Items.length < 4 ? 3 : 1,
       ProjectionExpression:
         "#c, #co, #tg, #ti, #lk, #rs, createdAt, downVote,  upVote, hashedUrl,  postType",
       ExpressionAttributeNames: {
@@ -497,22 +499,22 @@ async function devFeed(event) {
         "#tg": "tag",
         "#ti": "title",
         "#lk": "like",
-        "#rs": "responses",
+        "#rs": "responses"
       },
       KeyConditionExpression: "userId = :userId",
       ExpressionAttributeValues: {
-        ":userId": item.userId,
-      },
+        ":userId": item.userId
+      }
     };
     promises.push(queryItem(queryParams));
   });
 
   return Promise.all(promises)
-    .then((result) => {
-      returnObj.result = result;
+    .then(res => {
+      returnObj.Items = res;
       return okResponse("fetched items", returnObj);
     })
-    .catch((err) => internalServerError(err));
+    .catch(err => internalServerError(err));
 }
 
 async function devFeedPublic(event) {
@@ -528,8 +530,8 @@ async function devFeedPublic(event) {
     ProjectionExpression: "userId, reputation",
     KeyConditionExpression: "isDeactivated = :isDeactivated",
     ExpressionAttributeValues: {
-      ":isDeactivated": "false",
-    },
+      ":isDeactivated": "false"
+    }
   };
 
   if (limit && limit != "false") {
@@ -546,12 +548,12 @@ async function devFeedPublic(event) {
 
   const promises = [];
 
-  topUsers.Items.forEach((item) => {
+  topUsers.Items.forEach(item => {
     const queryParams = {
       TableName: "PostsTable",
       IndexName: "byUserId",
       ScanIndexForward: false,
-      Limit: result.data.Items.length < 4 ? 3 : 1,
+      Limit: topUsers.Items.length < 4 ? 3 : 1,
       ProjectionExpression:
         "#c, #co, #tg, #ti, #lk, #rs, createdAt, downVote,  upVote, hashedUrl,  postType",
       ExpressionAttributeNames: {
@@ -560,22 +562,22 @@ async function devFeedPublic(event) {
         "#tg": "tag",
         "#ti": "title",
         "#lk": "like",
-        "#rs": "responses",
+        "#rs": "responses"
       },
       KeyConditionExpression: "userId = :userId",
       ExpressionAttributeValues: {
-        ":userId": item.userId,
-      },
+        ":userId": item.userId
+      }
     };
     promises.push(queryItem(queryParams));
   });
 
   return Promise.all(promises)
-    .then((result) => {
-      returnObj.result = result;
+    .then(res => {
+      returnObj.Items = res;
       return okResponse("fetched items", returnObj);
     })
-    .catch((err) => internalServerError(err));
+    .catch(err => internalServerError(err));
 }
 
 module.exports = {
@@ -587,5 +589,5 @@ module.exports = {
   deletePost,
   votePost,
   devFeed,
-  devFeedPublic,
+  devFeedPublic
 };

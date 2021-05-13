@@ -1,0 +1,6 @@
+handler: QueryTester/index.main
+package:
+  individually: true
+  artifact: "./dist/QueryTester.zip"
+name: QueryTester-${self:provider.stage}
+cors: true

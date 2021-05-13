@@ -1,0 +1,71 @@
+{
+  "type": "REQUEST",
+  "methodArn": "arn:aws:execute-api:us-west-2:866628977333:f5uy9y7ygi/dev/$connect",
+  "headers": {
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "en-US,en;q=0.9,bn-BD;q=0.8,bn;q=0.7",
+    "Cache-Control": "no-cache",
+    "Connection": "upgrade",
+    "content-length": "0",
+    "Host": "f5uy9y7ygi.execute-api.us-west-2.amazonaws.com",
+    "Origin": "http://localhost:3000",
+    "Pragma": "no-cache",
+    "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits",
+    "Sec-WebSocket-Key": "nEq6x+2HbU4NdYOxX9RFjQ==",
+    "Sec-WebSocket-Version": "13",
+    "Upgrade": "websocket",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
+    "X-Amzn-Trace-Id": "Root=1-609b00e6-576898b61cb79c462cc3e050",
+    "X-Forwarded-For": "193.176.84.188",
+    "X-Forwarded-Port": "443",
+    "X-Forwarded-Proto": "https"
+  },
+  "multiValueHeaders": {
+    "Accept-Encoding": ["gzip, deflate, br"],
+    "Accept-Language": ["en-US,en;q=0.9,bn-BD;q=0.8,bn;q=0.7"],
+    "Cache-Control": ["no-cache"],
+    "Connection": ["upgrade"],
+    "content-length": ["0"],
+    "Host": ["f5uy9y7ygi.execute-api.us-west-2.amazonaws.com"],
+    "Origin": ["http://localhost:3000"],
+    "Pragma": ["no-cache"],
+    "Sec-WebSocket-Extensions": ["permessage-deflate; client_max_window_bits"],
+    "Sec-WebSocket-Key": ["nEq6x+2HbU4NdYOxX9RFjQ=="],
+    "Sec-WebSocket-Version": ["13"],
+    "Upgrade": ["websocket"],
+    "User-Agent": [
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36"
+    ],
+    "X-Amzn-Trace-Id": ["Root=1-609b00e6-576898b61cb79c462cc3e050"],
+    "X-Forwarded-For": ["193.176.84.188"],
+    "X-Forwarded-Port": ["443"],
+    "X-Forwarded-Proto": ["https"]
+  },
+  "queryStringParameters": {
+    "Authorizer": "eyJraWQiOiJDeHBJbjR3a21EK1NDcXZVMG9WNEVEVDVNMTVhYlhcL3ROVkloXC83eWFXOEU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI3YTI2MzVmMC0zY2Y4LTQ4Y2EtYWUwNy01N2U3Yzc2MjRlZjgiLCJ6b25laW5mbyI6IjEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicHJvZmlsZSI6InNhbnRpIiwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLXdlc3QtMi5hbWF6b25hd3MuY29tXC91cy13ZXN0LTJfWkF3cUJraTFYIiwiY29nbml0bzp1c2VybmFtZSI6IjdhMjYzNWYwLTNjZjgtNDhjYS1hZTA3LTU3ZTdjNzYyNGVmOCIsImF1ZCI6IjIwazJubWUzZWo4dWpldGMwN2sxNWdqaXA2IiwiZXZlbnRfaWQiOiJhNDQ2MDNkNC01YzI3LTQxZGItYWUzNS1kNmE4YTc5NTgzMzAiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTYyMDU0MDc2NSwibmFtZSI6ImNoZWF0aW5nIHNhbnRpIiwiZXhwIjoxNjIwNzc0NTE0LCJpYXQiOjE2MjA3NzA5MTQsImVtYWlsIjoic2F1bG8uc2l3b29Ad2lmaW1hcGxlLmNvbSJ9.dB5LzwxTgb9QfMzLt24KuzYT-OVP67LqIqBFOCdReSIgGWDoj3z04dKa3n_K29hAoF0yklNLNgmCq9np4-hJfQP922Eio9rHrt8m3Iv8cQMekS_2RvIF1Q3qIAVaBhfqK-9VGFQbqgegf8fHecgxSSGIJ9415GWrkk41iWOe-c3vgxTAuMnU-jtlnAGCtLr8RFE_0NmSF8TL7JsvYbpizx7WVdhBmxbXLaYv6334csdOEzDv0HIoyrPGcBX1p39F7rL_gdbY-JZDAsjw2NNaSvHJXA1ZiFkak7_rcvbK_yv46czeAsnRDKxiuz2s73Mi09_AsZ0MG1VGsiTDdJejPw"
+  },
+  "multiValueQueryStringParameters": {
+    "Authorizer": [
+      "eyJraWQiOiJDeHBJbjR3a21EK1NDcXZVMG9WNEVEVDVNMTVhYlhcL3ROVkloXC83eWFXOEU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI3YTI2MzVmMC0zY2Y4LTQ4Y2EtYWUwNy01N2U3Yzc2MjRlZjgiLCJ6b25laW5mbyI6IjEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicHJvZmlsZSI6InNhbnRpIiwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLXdlc3QtMi5hbWF6b25hd3MuY29tXC91cy13ZXN0LTJfWkF3cUJraTFYIiwiY29nbml0bzp1c2VybmFtZSI6IjdhMjYzNWYwLTNjZjgtNDhjYS1hZTA3LTU3ZTdjNzYyNGVmOCIsImF1ZCI6IjIwazJubWUzZWo4dWpldGMwN2sxNWdqaXA2IiwiZXZlbnRfaWQiOiJhNDQ2MDNkNC01YzI3LTQxZGItYWUzNS1kNmE4YTc5NTgzMzAiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTYyMDU0MDc2NSwibmFtZSI6ImNoZWF0aW5nIHNhbnRpIiwiZXhwIjoxNjIwNzc0NTE0LCJpYXQiOjE2MjA3NzA5MTQsImVtYWlsIjoic2F1bG8uc2l3b29Ad2lmaW1hcGxlLmNvbSJ9.dB5LzwxTgb9QfMzLt24KuzYT-OVP67LqIqBFOCdReSIgGWDoj3z04dKa3n_K29hAoF0yklNLNgmCq9np4-hJfQP922Eio9rHrt8m3Iv8cQMekS_2RvIF1Q3qIAVaBhfqK-9VGFQbqgegf8fHecgxSSGIJ9415GWrkk41iWOe-c3vgxTAuMnU-jtlnAGCtLr8RFE_0NmSF8TL7JsvYbpizx7WVdhBmxbXLaYv6334csdOEzDv0HIoyrPGcBX1p39F7rL_gdbY-JZDAsjw2NNaSvHJXA1ZiFkak7_rcvbK_yv46czeAsnRDKxiuz2s73Mi09_AsZ0MG1VGsiTDdJejPw"
+    ]
+  },
+  "stageVariables": {},
+  "requestContext": {
+    "routeKey": "$connect",
+    "eventType": "CONNECT",
+    "extendedRequestId": "fL0T-EdvPHcFe-g=",
+    "requestTime": "11/May/2021:22:10:46 +0000",
+    "messageDirection": "IN",
+    "stage": "dev",
+    "connectedAt": 1620771046099,
+    "requestTimeEpoch": 1620771046101,
+    "identity": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
+      "sourceIp": "193.176.84.188"
+    },
+    "requestId": "fL0T-EdvPHcFe-g=",
+    "domainName": "f5uy9y7ygi.execute-api.us-west-2.amazonaws.com",
+    "connectionId": "fL0T9epHPHcCElQ=",
+    "apiId": "f5uy9y7ygi"
+  }
+}

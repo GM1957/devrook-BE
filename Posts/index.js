@@ -7,14 +7,14 @@ const {
   deletePost,
   votePost,
   devFeed,
-  devFeedPublic,
+  devFeedPublic
 } = require("./posts");
 
 const {
-  badRequestResponse,
+  badRequestResponse
 } = require("../Utils/responseCodes").responseMessages;
 
-exports.main = async (event) => {
+exports.main = async event => {
   console.log("Input to the Posts lambda", event);
 
   const { action } = event;
@@ -29,7 +29,7 @@ exports.main = async (event) => {
 
     event = {
       ...event,
-      ...details,
+      ...details
     };
 
     delete event.details;
@@ -44,7 +44,7 @@ exports.main = async (event) => {
 
     event = {
       ...event,
-      ...details,
+      ...details
     };
 
     delete event.details;
@@ -59,7 +59,7 @@ exports.main = async (event) => {
 
     event = {
       ...event,
-      ...details,
+      ...details
     };
 
     delete event.details;
@@ -82,7 +82,7 @@ exports.main = async (event) => {
 
     event = {
       ...event,
-      ...details,
+      ...details
     };
 
     delete event.details;

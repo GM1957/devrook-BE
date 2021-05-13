@@ -98,7 +98,7 @@ events:
       response: ${file(./Resources/LambdaResponses.yml)}
 
   - http:
-      path: /post/dev-feed
+      path: /post/personalized-dev-feed
       method: POST
       cors: true
       integration: lambda
