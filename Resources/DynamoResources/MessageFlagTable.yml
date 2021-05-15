@@ -1,0 +1,33 @@
+Type: AWS::DynamoDB::Table
+Properties:
+  TableName: MessageFlagTable
+  AttributeDefinitions:
+    - AttributeName: combId
+      AttributeType: S
+    - AttributeName: senderId
+      AttributeType: S
+    - AttributeName: receiverId
+      AttributeType: S
+    - AttributeName: createdAt
+      AttributeType: S
+  KeySchema:
+    - AttributeName: combId 
+      KeyType: HASH
+  GlobalSecondaryIndexes:
+    - IndexName: bySenderId
+      KeySchema:
+        - AttributeName: senderId
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+      Projection:
+        ProjectionType: ALL    
+    - IndexName: byReceiverId
+      KeySchema:
+        - AttributeName: receiverId
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+      Projection:
+        ProjectionType: ALL        
+  BillingMode: PAY_PER_REQUEST    

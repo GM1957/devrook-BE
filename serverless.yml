@@ -68,6 +68,7 @@ resources:
     PostsTable: ${file(./Resources/DynamoResources/PostsTable.yml)}
     WebSocketUserTable: ${file(./Resources/DynamoResources/WebSocketUserTable.yml)}
     MessageTable: ${file(./Resources/DynamoResources/MessageTable.yml)}
+    MessageFlagTable: ${file(./Resources/DynamoResources/MessageFlagTable.yml)}
 
   Outputs:
     CognitoUserPoolId:

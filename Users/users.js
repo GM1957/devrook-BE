@@ -641,6 +641,7 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserByUserNamePublicUse,
+  getUserByUserName,
   getUserByUserId,
   topReputedUsers,
   followUser,

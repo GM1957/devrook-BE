@@ -1,9 +1,10 @@
 const jose = require("node-jose");
 const fetch = require("node-fetch").default;
 
-const generatePolicy = function(principalId, effect, resource) {
+const generatePolicy = function(principalId, effect, resource, claims) {
   const authResponse = {};
   authResponse.principalId = principalId;
+  authResponse.context = claims;
   if (effect && resource) {
     const policyDocument = {};
     // default version
@@ -20,8 +21,8 @@ const generatePolicy = function(principalId, effect, resource) {
   return authResponse;
 };
 
-const generateAllow = function(principalId, resource) {
-  return generatePolicy(principalId, "Allow", resource);
+const generateAllow = function(principalId, resource, claims) {
+  return generatePolicy(principalId, "Allow", resource, claims);
 };
 
 exports.main = async (event, context) => {
@@ -61,6 +62,7 @@ exports.main = async (event, context) => {
             "process.env.COGNITO_USER_POOL_CLIENT",
             process.env.COGNITO_USER_POOL_CLIENT
           );
+
           // Verify the token expiration
           const currentTime = Math.floor(new Date() / 1000);
           if (currentTime > claims.exp) {
@@ -73,7 +75,7 @@ exports.main = async (event, context) => {
             console.error("Token wasn't issued for target audience");
             context.fail("Token was not issued for target audience");
           } else {
-            context.succeed(generateAllow("me", methodArn));
+            context.succeed(generateAllow("me", methodArn, claims));
           }
         } catch (error) {
           console.error("Unable to verify token", error);

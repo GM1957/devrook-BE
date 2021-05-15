@@ -1,0 +1,40 @@
+{
+  "requestContext": {
+    "routeKey": "$default",
+    "authorizer": {
+      "sub": "7a2635f0-3cf8-48ca-ae07-57e7c7624ef8",
+      "zoneinfo": "1",
+      "email_verified": "true",
+      "profile": "santi",
+      "iss": "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_ZAwqBki1X",
+      "principalId": "me",
+      "cognito:username": "7a2635f0-3cf8-48ca-ae07-57e7c7624ef8",
+      "aud": "20k2nme3ej8ujetc07k15gjip6",
+      "event_id": "a44603d4-5c27-41db-ae35-d6a8a7958330",
+      "token_use": "id",
+      "auth_time": "1620540765",
+      "name": "cheating santi",
+      "exp": "1621074273",
+      "iat": "1621070673",
+      "email": "saulo.siwoo@wifimaple.com"
+    },
+    "messageId": "fXQeAdPdvHcCFrw=",
+    "eventType": "MESSAGE",
+    "extendedRequestId": "fXQeAG4ovHcFULQ=",
+    "requestTime": "15/May/2021:09:28:57 +0000",
+    "messageDirection": "IN",
+    "stage": "dev",
+    "connectedAt": 1621070930982,
+    "requestTimeEpoch": 1621070937581,
+    "identity": {
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+      "sourceIp": "193.176.84.180"
+    },
+    "requestId": "fXQeAG4ovHcFULQ=",
+    "domainName": "f5uy9y7ygi.execute-api.us-west-2.amazonaws.com",
+    "connectionId": "fXQc-dMIvHcCFrw=",
+    "apiId": "f5uy9y7ygi"
+  },
+  "body": "{\"message\":\"bbbb\",\"receiverUserName\":\"GM1957\"}",
+  "isBase64Encoded": false
+}
