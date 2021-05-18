@@ -9,7 +9,8 @@ const config = {
     S3upload: "./S3upload/index.js",
     Posts: "./Posts/index.js",
     WebSockets: "./WebSockets/index.js",
-    AuthWebSocket: "./AuthWebSocket/index.js"
+    AuthWebSocket: "./AuthWebSocket/index.js",
+    Messages: "./messages/index.js"
   },
   output: {
     filename: "[name]/index.js",

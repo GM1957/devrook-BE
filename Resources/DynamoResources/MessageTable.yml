@@ -2,20 +2,10 @@ Type: AWS::DynamoDB::Table
 Properties:
   TableName: MessageTable
   AttributeDefinitions:
-  # when you will try to get conversation between two people just do
-  #||=> query for combId(personAuserId*personBuserId) if it comes empty then again try with combId(personBuserId*personAuserId) 
-
-  # to get list of users with whome you have a conversation  
     - AttributeName: combId
       AttributeType: S
     - AttributeName: createdAt
       AttributeType: S
-    # - AttributeName: senderId
-    #   AttributeType: S
-    # - AttributeName: receiverId
-    #   AttributeType: S
-    # - AttributeName: type
-    #   AttributeType: S
   KeySchema:
     - AttributeName: combId 
       KeyType: HASH

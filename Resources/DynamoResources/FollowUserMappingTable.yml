@@ -23,5 +23,14 @@ Properties:
         - AttributeName: createdAt
           KeyType: RANGE
       Projection:
+        ProjectionType: ALL
+    # checking if i follow the user or not         
+    - IndexName: ifIfollow
+      KeySchema:
+        - AttributeName: followedById
+          KeyType: HASH
+        - AttributeName: userId
+          KeyType: RANGE
+      Projection:
         ProjectionType: ALL      
   BillingMode: PAY_PER_REQUEST    

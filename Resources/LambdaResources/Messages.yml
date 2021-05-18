@@ -1,0 +1,50 @@
+handler: Messages/index.main
+package:
+  individually: true
+  artifact: "./dist/Messages.zip"
+environment:
+  USER_POOL_ID:
+    Ref: CognitoUserPool
+name: Messages-${self:provider.stage}
+events:
+  - http:
+      path: /messages/chatted-with-ids
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "chattedWithIds",
+            "userId": "$context.authorizer.claims.sub"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+  - http:
+      path: /messages/full-chat
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "fullChat",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}

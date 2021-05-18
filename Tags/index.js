@@ -16,8 +16,18 @@ const {
 exports.main = async event => {
   console.log("Input to the Tags lambda", event);
 
-  const { action } = event;
+  const { action, details } = event;
   delete event.action;
+
+  if (details) {
+    if (details.userId) delete details.userId;
+    event = {
+      ...event,
+      ...details
+    };
+
+    delete event.details;
+  }
 
   if (action === "createDefaultTags") {
     return createDefaultTags(event);
@@ -26,49 +36,10 @@ exports.main = async event => {
   } else if (action === "getPopularTags") {
     return getPopularTags(event);
   } else if (action === "followTag") {
-    const { details } = event;
-
-    if (details) {
-      if (details.userId) delete details.userId;
-    }
-
-    event = {
-      ...event,
-      ...details
-    };
-
-    delete event.details;
-
     return followTag(event);
   } else if (action === "followTagInBulk") {
-    const { details } = event;
-
-    if (details) {
-      if (details.userId) delete details.userId;
-    }
-
-    event = {
-      ...event,
-      ...details
-    };
-
-    delete event.details;
-
     return followTagInBulk(event);
   } else if (action === "unFollowTag") {
-    const { details } = event;
-
-    if (details) {
-      if (details.userId) delete details.userId;
-    }
-
-    event = {
-      ...event,
-      ...details
-    };
-
-    delete event.details;
-
     return unFollowTag(event);
   } else {
     return badRequestResponse(action);

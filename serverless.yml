@@ -43,6 +43,7 @@ functions:
   Posts: ${file(./Resources/LambdaResources/Posts.yml)}
   WebSockets: ${file(./Resources/LambdaResources/WebSockets.yml)}
   AuthWebSocket: ${file(./Resources/LambdaResources/AuthWebSocket.yml)}
+  Messages: ${file(./Resources/LambdaResources/Messages.yml)}
 
 resources:
   Resources:

@@ -7,6 +7,7 @@ const {
   topReputedUsers,
   followUserInBulk,
   getUserPreviousVotes,
+  ifIfollowChecker,
   followUser,
   unFollowUser,
   usersIFollow,
@@ -20,57 +21,27 @@ const {
 exports.main = async event => {
   console.log("Input to the Users lambda", event);
 
-  const { action } = event;
+  const { action, details } = event;
   delete event.action;
 
-  if (action === "create") {
-    const { details } = event;
-    if (details) {
-      if (details.userId) delete details.userId;
-    }
+  if (details) {
+    if (details.userId) delete details.userId;
+
     event = {
       ...event,
       ...details
     };
-    delete event.details;
 
+    delete event.details;
+  }
+
+  if (action === "create") {
     return createUser(event);
   } else if (action === "update") {
-    const { details } = event;
-    if (details) {
-      if (details.userId) delete details.userId;
-    }
-
-    event = {
-      ...event,
-      ...details
-    };
-    delete event.details;
-
     return updateUser(event);
   } else if (action === "followUserInBulk") {
-    const { details } = event;
-    if (details) {
-      if (details.userId) delete details.userId;
-    }
-    event = {
-      ...event,
-      ...details
-    };
-
-    delete event.details;
     return followUserInBulk(event);
   } else if (action === "getUserPreviousVotes") {
-    const { details } = event;
-    if (details) {
-      if (details.userId) delete details.userId;
-    }
-    event = {
-      ...event,
-      ...details
-    };
-
-    delete event.details;
     return getUserPreviousVotes(event);
   } else if (action === "delete") {
     return deleteUser(event);
@@ -80,6 +51,12 @@ exports.main = async event => {
     return getUserByUserId(event);
   } else if (action === "topReputedUsers") {
     return topReputedUsers(event);
+  } else if (action === "ifIfollowChecker") {
+    return ifIfollowChecker(event);
+  } else if (action === "followUser") {
+    return followUser(event);
+  } else if (action === "unFollowUser") {
+    return unFollowUser(event);
   } else {
     return badRequestResponse(action);
   }

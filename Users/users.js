@@ -7,10 +7,6 @@ const {
 } = require("../Utils/DBClient");
 
 const {
-  expressionValueGeneratorFornIN
-} = require("../Utils/expressionValueGeneratorForIN");
-
-const {
   createResponse,
   updateResponse,
   okResponse,
@@ -20,6 +16,10 @@ const {
 } = require("../Utils/responseCodes").responseMessages;
 
 const { customValidator } = require("../Utils/customValidator");
+
+const {
+  expressionValueGeneratorFornIN
+} = require("../Utils/expressionValueGeneratorForIN");
 
 const { cognitoIdentityService } = require("../Utils/cognitoConnection.js");
 
@@ -450,7 +450,7 @@ async function unFollowUser(event) {
     KeyConditionExpression: "followedById = :followedById AND userId = :userId",
     ExpressionAttributeValues: {
       ":followedById": followedById,
-      ":userId": user.data.userId
+      ":userId": user.data[0].userId
     }
   };
 
@@ -636,6 +636,37 @@ function getUserPreviousVotes(event) {
     .catch(err => internalServerError(err));
 }
 
+async function ifIfollowChecker(event) {
+  console.log("Inside ifIfollowChecker", event);
+
+  const errors = customValidator(event, ["userId", "userName"]);
+  if (errors.length)
+    return badRequestResponse("missing mandetory fields", errors);
+
+  const { userId, userName } = event;
+  const whoIFollow = await getUserByUserName({ userName });
+
+  const params = {
+    TableName: "followUserMappingTable",
+    IndexName: "ifIfollow",
+    KeyConditionExpression: "followedById = :followedById AND userId = :userId",
+    ExpressionAttributeValues: {
+      ":followedById": userId,
+      ":userId": whoIFollow.data[0].userId
+    }
+  };
+
+  return queryItem(params)
+    .then(result => {
+      if (result.length) {
+        delete result[0].userId;
+        result[0].userName = userName;
+      }
+      return okResponse("fetched details", result);
+    })
+    .catch(err => internalServerError(err));
+}
+
 module.exports = {
   createUser,
   updateUser,
@@ -645,8 +676,9 @@ module.exports = {
   getUserByUserId,
   topReputedUsers,
   followUser,
-  followUserInBulk,
   unFollowUser,
+  ifIfollowChecker,
+  followUserInBulk,
   usersIFollow,
   myFollowers,
   getUserPreviousVotes
