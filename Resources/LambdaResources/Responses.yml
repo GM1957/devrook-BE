@@ -1,0 +1,46 @@
+handler: Responses/index.main
+package:
+  individually: true
+  artifact: "./dist/Responses.zip"
+environment:
+  USER_POOL_ID:
+    Ref: CognitoUserPool
+name: Responses-${self:provider.stage}
+events:
+  - http:
+      path: /responses/create-response
+      method: POST
+      cors: true
+      integration: lambda
+      authorizer:
+        name: cognitoAuthorizer
+        type: COGNITO_USER_POOLS
+        arn:
+          Fn::GetAtt:
+            - CognitoUserPool
+            - Arn
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "createResponse",
+            "userId": "$context.authorizer.claims.sub",
+            "details": $input.json("$")
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
+      path: /responses/get/{post_url}/{fetch_limit}/{last_evaluated_key}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "getResponses",
+            "postUrl": "$input.params(''post_url'')",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}

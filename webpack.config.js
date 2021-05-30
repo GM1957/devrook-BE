@@ -10,7 +10,9 @@ const config = {
     Posts: "./Posts/index.js",
     WebSockets: "./WebSockets/index.js",
     AuthWebSocket: "./AuthWebSocket/index.js",
-    Messages: "./messages/index.js"
+    Messages: "./Messages/index.js",
+    Responses: "./Responses/index.js",
+    Search: "./Search/index.js"
   },
   output: {
     filename: "[name]/index.js",

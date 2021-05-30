@@ -8,8 +8,7 @@ const {
   followUserInBulk,
   getUserPreviousVotes,
   ifIfollowChecker,
-  followUser,
-  unFollowUser,
+  followUnfollowUser,
   usersIFollow,
   myFollowers
 } = require("./users");
@@ -53,10 +52,12 @@ exports.main = async event => {
     return topReputedUsers(event);
   } else if (action === "ifIfollowChecker") {
     return ifIfollowChecker(event);
-  } else if (action === "followUser") {
-    return followUser(event);
-  } else if (action === "unFollowUser") {
-    return unFollowUser(event);
+  } else if (action === "followUnfollowUser") {
+    return followUnfollowUser(event);
+  } else if (action === "usersIFollow") {
+    return usersIFollow(event);
+  } else if (action === "myFollowers") {
+    return myFollowers(event);
   } else {
     return badRequestResponse(action);
   }

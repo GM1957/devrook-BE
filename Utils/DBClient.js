@@ -59,6 +59,20 @@ function queryItemPaginated(params) {
   );
 }
 
+//Function for Paginated Sacnning Item From DynamoDB
+function scanItemPaginated(params) {
+  return new Promise((resolve, reject) =>
+    DBClient.scan(params, function(error, data) {
+      if (error) {
+        console.log(error);
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    })
+  );
+}
+
 //Function for filtering Item From DynamoDB
 function filterItem(params) {
   return new Promise((resolve, reject) =>
@@ -169,5 +183,6 @@ module.exports = {
   batchWrite,
   scanItem,
   filterItemPaginated,
-  queryItemPaginated
+  queryItemPaginated,
+  scanItemPaginated
 };

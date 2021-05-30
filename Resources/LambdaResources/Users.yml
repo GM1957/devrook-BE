@@ -164,7 +164,8 @@ events:
             "userId": "$context.authorizer.claims.sub",
             "details": $input.json("$")
             }'
-      response: ${file(./Resources/LambdaResponses.yml)}      
+      response: ${file(./Resources/LambdaResponses.yml)}    
+
   - http:
       path: /user/follow-checker
       method: POST
@@ -185,9 +186,10 @@ events:
             "userId": "$context.authorizer.claims.sub",
             "details": $input.json("$")
             }'
-      response: ${file(./Resources/LambdaResponses.yml)}      
+      response: ${file(./Resources/LambdaResponses.yml)}   
+
   - http:
-      path: /user/follow-user
+      path: /user/follow-unfollow-user
       method: POST
       cors: true
       integration: lambda
@@ -202,29 +204,40 @@ events:
         passThrough: WHEN_NO_MATCH
         template:
           application/json: '{
-            "action": "followUser",
+            "action": "followUnfollowUser",
             "followedById": "$context.authorizer.claims.sub",
             "details": $input.json("$")
             }'
-      response: ${file(./Resources/LambdaResponses.yml)}      
+      response: ${file(./Resources/LambdaResponses.yml)}   
+
   - http:
-      path: /user/unfollow-user
-      method: POST
+      path: /user/get-my-followers/{user_name}/{fetch_limit}/{last_evaluated_key}
+      method: GET
       cors: true
       integration: lambda
-      authorizer:
-        name: cognitoAuthorizer
-        type: COGNITO_USER_POOLS
-        arn:
-          Fn::GetAtt:
-            - CognitoUserPool
-            - Arn
       request:
         passThrough: WHEN_NO_MATCH
         template:
           application/json: '{
-            "action": "unFollowUser",
-            "followedById": "$context.authorizer.claims.sub",
-            "details": $input.json("$")
+            "action": "myFollowers",
+            "userName": "$input.params(''user_name'')",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
             }'
-      response: ${file(./Resources/LambdaResponses.yml)}      
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
+      path: /user/users-i-follow/{user_name}/{fetch_limit}/{last_evaluated_key}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "usersIFollow",
+            "userName": "$input.params(''user_name'')",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}

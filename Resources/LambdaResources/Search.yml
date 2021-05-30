@@ -1,0 +1,36 @@
+handler: Search/index.main
+package:
+  individually: true
+  artifact: "./dist/Search.zip"
+name: Search-${self:provider.stage}
+events:
+  - http:
+      path: /search/post/{search_input}/{fetch_limit}/{last_evaluated_key}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "postSearch",
+            "searchInput": "$input.params(''search_input'')",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+  - http:
+      path: /search/user/{search_input}/{fetch_limit}/{last_evaluated_key}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "devSearch",
+            "searchInput": "$input.params(''search_input'')",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}

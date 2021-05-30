@@ -1,4 +1,8 @@
-const { queryItem, batchGetItem } = require("../Utils/DBClient");
+const {
+  queryItem,
+  batchGetItem,
+  queryItemPaginated
+} = require("../Utils/DBClient");
 
 const {
   okResponse,
@@ -71,22 +75,21 @@ async function chattedWithIds(event) {
         (firstSortedArr[index1] ? firstSortedArr[index1] : false) >
           (secondSortedArr[index2] ? secondSortedArr[index2] : false))
     ) {
-      keys[current] = { userId: firstSortedArr[index1].senderId };
+      keys[current] = { userId: firstSortedArr[index1].receiverId };
       index1++;
     } else {
-      keys[current] = { userId: secondSortedArr[index2].receiverId };
+      keys[current] = { userId: secondSortedArr[index2].senderId };
       index2++;
     }
     current++;
   }
 
-  console.log("keys", keys);
-
   const params = {
     RequestItems: {
       UsersTable: {
         Keys: keys,
-        ProjectionExpression: "userName, profilePicture"
+        ExpressionAttributeNames: { "#n": "name" },
+        ProjectionExpression: "userName, profilePicture, #n"
       }
     }
   };
@@ -103,7 +106,7 @@ async function fullChat(event) {
   if (errors.length)
     return badRequestResponse("missing mandetory fields", errors);
 
-  const { userId, userName } = event;
+  const { userId, userName, limit, LastEvaluatedKey } = event;
 
   const secondUser = await getUserByUserName({ userName: userName });
 
@@ -116,25 +119,49 @@ async function fullChat(event) {
     TableName: "MessageTable",
     ScanIndexForward: false,
     KeyConditionExpression: "combId = :combId",
+    ProjectionExpression: "#m, senderId, receiverId, createdAt",
+    ExpressionAttributeNames: { "#m": "message" },
     ExpressionAttributeValues: {
       ":combId": firstComb
     }
   };
 
-  return queryItem(firstCombParams).then(async response => {
-    if (!response.length) {
+  if (limit && limit != "false") {
+    firstCombParams.Limit = limit;
+  }
+  if (LastEvaluatedKey && LastEvaluatedKey != "false") {
+    firstCombParams.ExclusiveStartKey = LastEvaluatedKey;
+  }
+
+  return queryItemPaginated(firstCombParams).then(async response => {
+    if (!response.Items.length) {
       const secondCombParams = {
         TableName: "MessageTable",
         ScanIndexForward: false,
         KeyConditionExpression: "combId = :combId",
+        ProjectionExpression: "#m, senderId, receiverId, createdAt",
+        ExpressionAttributeNames: { "#m": "message" },
         ExpressionAttributeValues: {
           ":combId": secondComb
         }
       };
-      const newResponse = await queryItem(secondCombParams);
 
+      if (limit && limit != "false") {
+        secondCombParams.Limit = limit;
+      }
+      if (LastEvaluatedKey && LastEvaluatedKey != "false") {
+        secondCombParams.ExclusiveStartKey = LastEvaluatedKey;
+      }
+
+      const newResponse = await queryItemPaginated(secondCombParams);
+      newResponse.Items.forEach(item =>
+        item.senderId === userId ? delete item.receiverId : delete item.senderId
+      );
       return okResponse("fetched data", newResponse);
     }
+    response.Items.forEach(item =>
+      item.senderId === userId ? delete item.receiverId : delete item.senderId
+    );
     return okResponse("fetched data", response);
   });
 }

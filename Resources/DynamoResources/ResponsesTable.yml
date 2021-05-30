@@ -1,0 +1,43 @@
+Type: AWS::DynamoDB::Table
+Properties:
+  TableName: ResponsesTable
+  AttributeDefinitions:
+    - AttributeName: responseId
+      AttributeType: S
+    - AttributeName: postUrl
+      AttributeType: S
+    - AttributeName: userId
+      AttributeType: S
+    - AttributeName: createdAt
+      AttributeType: S
+    - AttributeName: upVote
+      AttributeType: N
+  KeySchema:
+    - AttributeName: responseId 
+      KeyType: HASH
+  GlobalSecondaryIndexes:
+    - IndexName: byPostUrl
+      KeySchema:
+        - AttributeName: postUrl
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+      Projection:
+        ProjectionType: ALL    
+    - IndexName: byPostUrlAndUpvote
+      KeySchema:
+        - AttributeName: postUrl
+          KeyType: HASH
+        - AttributeName: upVote
+          KeyType: RANGE
+      Projection:
+        ProjectionType: ALL    
+    - IndexName: byUserId
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+      Projection:
+        ProjectionType: ALL        
+  BillingMode: PAY_PER_REQUEST    

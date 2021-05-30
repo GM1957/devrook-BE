@@ -7,7 +7,9 @@ const {
   deletePost,
   votePost,
   devFeed,
-  devFeedPublic
+  devFeedPublic,
+  tagFeed,
+  devPosts
 } = require("./posts");
 
 const {
@@ -48,6 +50,10 @@ exports.main = async event => {
     return devFeed(event);
   } else if (action === "devFeedPublic") {
     return devFeedPublic(event);
+  } else if (action === "tagFeed") {
+    return tagFeed(event);
+  } else if (action === "devPosts") {
+    return devPosts(event);
   } else {
     return badRequestResponse("action not found", action);
   }

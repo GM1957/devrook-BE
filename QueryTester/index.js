@@ -9,10 +9,13 @@ const {
 exports.main = async event => {
   const params = {
     TableName: "PostsTable",
-    KeyConditionExpression: "hashedUrl = :hashedUrl AND createdAt = :createdAt",
+    IndexName: "byIsDeactivatedAndHashedUrl",
+    ScanIndexForward: false,
+    KeyConditionExpression:
+      "isDeactivated = :isDeactivated AND contains (hashedUrl , :hasVal)",
     ExpressionAttributeValues: {
-      ":hashedUrl": "again-blog-78c5d4",
-      ":createdAt": "2021-05-09T01:31:35.459Z"
+      ":isDeactivated": "false",
+      ":hasVal": "is"
     }
   };
   const res = await queryItem(params);

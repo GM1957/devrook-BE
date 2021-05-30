@@ -173,6 +173,38 @@ events:
       response: ${file(./Resources/LambdaResponses.yml)}
 
   - http:
+      path: /post/dev-posts/{user_name}/{fetch_limit}/{last_evaluated_key}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "devPosts",
+            "userName": "$input.params(''user_name'')",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
+      path: /post/tag-feed/{tag_name}/{fetch_limit}/{last_evaluated_key}
+      method: GET
+      cors: true
+      integration: lambda
+      request:
+        passThrough: WHEN_NO_MATCH
+        template:
+          application/json: '{
+            "action": "tagFeed",
+            "tagName": "$input.params(''tag_name'')",
+            "limit": "$input.params(''fetch_limit'')",
+            "LastEvaluatedKey": "$input.params(''last_evaluated_key'')"
+            }'
+      response: ${file(./Resources/LambdaResponses.yml)}
+
+  - http:
       path: /post/get-full/{post_url}
       method: GET
       cors: true
@@ -182,7 +214,7 @@ events:
         template:
           application/json: '{
             "action": "getFullPost",
-            "posturl": "$input.params(''post_url'')"
+            "postUrl": "$input.params(''post_url'')"
             }'
       response: ${file(./Resources/LambdaResponses.yml)}
 

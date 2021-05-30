@@ -44,6 +44,8 @@ functions:
   WebSockets: ${file(./Resources/LambdaResources/WebSockets.yml)}
   AuthWebSocket: ${file(./Resources/LambdaResources/AuthWebSocket.yml)}
   Messages: ${file(./Resources/LambdaResources/Messages.yml)}
+  Responses: ${file(./Resources/LambdaResources/Responses.yml)}
+  Search: ${file(./Resources/LambdaResources/Search.yml)}
 
 resources:
   Resources:
@@ -70,6 +72,7 @@ resources:
     WebSocketUserTable: ${file(./Resources/DynamoResources/WebSocketUserTable.yml)}
     MessageTable: ${file(./Resources/DynamoResources/MessageTable.yml)}
     MessageFlagTable: ${file(./Resources/DynamoResources/MessageFlagTable.yml)}
+    ResponsesTable: ${file(./Resources/DynamoResources/ResponsesTable.yml)}
 
   Outputs:
     CognitoUserPoolId:

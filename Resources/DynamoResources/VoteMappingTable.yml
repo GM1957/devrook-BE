@@ -11,14 +11,14 @@ Properties:
   KeySchema:
     - AttributeName: voteId 
       KeyType: HASH
-    - AttributeName: createdAt 
+    - AttributeName: userId 
       KeyType: RANGE
   GlobalSecondaryIndexes:
-    - IndexName: byVoteAndUserId
+    - IndexName: byVoteId
       KeySchema:
         - AttributeName: voteId
           KeyType: HASH
-        - AttributeName: userId
+        - AttributeName: createdAt
           KeyType: RANGE
       Projection:
         ProjectionType: ALL      

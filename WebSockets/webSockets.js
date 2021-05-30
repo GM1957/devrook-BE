@@ -91,6 +91,10 @@ async function messageHandler(event) {
     const receiverDetails = await getUserByUserName({
       userName: receiverUserName
     });
+
+    if (!receiverDetails.data.length)
+      return badRequestResponse("receiver not found");
+
     console.log("receiverDetails", receiverDetails);
     const receiverId = receiverDetails.data[0].userId;
 

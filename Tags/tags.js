@@ -223,7 +223,7 @@ async function followTag(event) {
       userId: user.data[0].userId
     },
     UpdateExpression: "set tags = :tags",
-    ExpressionAttributeValues: { tags: updatedTags }
+    ExpressionAttributeValues: { ":tags": updatedTags }
   };
 
   promises.push(updateItem(followTagParams));
@@ -268,7 +268,7 @@ async function unFollowTag(event) {
       userId: user.data[0].userId
     },
     UpdateExpression: "set tags = :tags",
-    ExpressionAttributeValues: { tags: updatedTags }
+    ExpressionAttributeValues: { ":tags": updatedTags }
   };
 
   promises.push(updateItem(unFollowTagParams));
@@ -307,6 +307,47 @@ async function followTagInBulk(event) {
     .catch(err => internalServerError(err));
 }
 
+async function devsWhoFollowTheTag(event) {
+  console.log("Inside devsWhoFollowTheTag function", event);
+
+  const errors = customValidator(event, ["tagName"]);
+  if (errors.length)
+    return badRequestResponse("missing mandatory fields", errors);
+
+  const { tagName, limit, LastEvaluatedKey } = event;
+
+  const tagDetails = await getTag({ tagName });
+  if (!tagDetails.data.length)
+    return badRequestResponse(`tag not found ${tagName}`);
+  if (tagDetails.data[0].popularity < 1)
+    return okResponse("fetched details", []);
+
+  const params = {
+    TableName: "UsersTable",
+    IndexName: "sortByReputation",
+    ScanIndexForward: false,
+    KeyConditionExpression: "isDeactivated = :isDeactivated",
+    FilterExpression: "tags.#tagName = :val",
+    ProjectionExpression: "userName, #n,  profilePicture, reputation",
+    ExpressionAttributeValues: { ":val": "1", ":isDeactivated": "false" },
+    ExpressionAttributeNames: {
+      "#tagName": tagName,
+      "#n": "name"
+    }
+  };
+
+  if (limit && limit != "false") {
+    params.Limit = limit;
+  }
+  if (LastEvaluatedKey && LastEvaluatedKey != "false") {
+    params.ExclusiveStartKey = LastEvaluatedKey;
+  }
+
+  return queryItemPaginated(params)
+    .then(result => okResponse("fetched result", result))
+    .catch(err => internalServerError(err));
+}
+
 module.exports = {
   createTag,
   getTag,
@@ -316,5 +357,6 @@ module.exports = {
   followTagInBulk,
   unFollowTag,
   createDefaultTags,
-  getPopularTags
+  getPopularTags,
+  devsWhoFollowTheTag
 };

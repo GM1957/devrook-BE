@@ -1,7 +1,12 @@
 const uuid = require("uuid");
 
 const { createTag, increaseTagPopularity } = require("../Tags/tags");
-const { getUserByUserId } = require("../Users/users");
+const {
+  getUserByUserId,
+  getUserByUserName,
+  increaseUserReputation,
+  decreaseUserReputation
+} = require("../Users/users");
 const {
   containsExpresseionGeneratorForOR
 } = require("../Utils/containsExpresseionGeneratorForOR");
@@ -367,85 +372,178 @@ async function deletePost(event) {
 async function votePost(event) {
   console.log("Inside votePost function", event);
 
-  const errors = customValidator(event, ["userId", "voteType", "postUrl"]);
+  const errors = customValidator(event, ["userId", "voteType", "id", "type"]);
   if (errors.length)
     return badRequestResponse("missing mandetory fields", errors);
 
-  const { userId, voteType, postUrl } = event;
+  // type is to define its post or response
+  const { userId, voteType, id, type } = event;
 
-  // Conditions can be of length 1 or 2 only thats why we have to use voteType as filter expression here
+  const postOrResFindParams = {
+    TableName: type === "post" ? "PostsTable" : "ResponsesTable",
+    KeyConditionExpression:
+      type === "post" ? "hashedUrl = :hashedUrl" : "responseId = :responseId",
+    ExpressionAttributeValues:
+      type === "post"
+        ? {
+            ":hashedUrl": id
+          }
+        : { ":responseId": id }
+  };
+
+  const postOrResDetails = await queryItem(postOrResFindParams);
+
+  if (!postOrResDetails.length)
+    return badRequestResponse(
+      `no post or response found found with the id: ${id}`
+    );
+
+  // first check the previous vote mappings for the user and the post
   const voteMappingQueryParams = {
     TableName: "VoteMappingTable",
-    IndexName: "byVoteAndUserId",
     KeyConditionExpression: "voteId = :voteId AND userId = :userId",
-    FilterExpression: "voteType = :voteType",
     ExpressionAttributeValues: {
-      ":voteId": postUrl,
-      ":userId": userId,
-      ":voteType": voteType
+      ":voteId": id,
+      ":userId": userId
     }
   };
 
-  const postParams = {
-    TableName: "PostsTable",
-    KeyConditionExpression: "hashedUrl = :hashedUrl",
-    ExpressionAttributeValues: {
-      ":hashedUrl": postUrl
-    }
-  };
-
-  const prevVotingDetails = await queryItem(voteMappingQueryParams);
-  const postDetails = await queryItem(postParams);
+  const previousVotingDetails = await queryItem(voteMappingQueryParams);
 
   const promises = [];
-  let ExpressionAttributeValues = {};
 
-  if (!prevVotingDetails.length) {
-    const voteMappingInsertParams = {
-      TableName: "VoteMappingTable",
-      Item: {
-        userId,
-        voteType,
-        voteId: postUrl,
-        createdAt: new Date(Date.now()).toISOString(),
-        isDeactivated: "false"
-      }
-    };
-    promises.push(putItem(voteMappingInsertParams));
+  // now we have to check if previous vote is present and voteType is same or not
+  // -- if present and same vote type then delete -- else update with new vote type
 
-    ExpressionAttributeValues[":newValue"] =
-      parseInt(postDetails[0][voteType]) + 1;
-  } else if (prevVotingDetails.length && voteType === "like") {
-    const voteMappingDeleteParams = {
-      TableName: "VoteMappingTable",
-      Key: {
-        voteId: prevVotingDetails[0].voteId,
-        createdAt: prevVotingDetails[0].createdAt
-      }
-    };
-    promises.push(deleteItem(voteMappingDeleteParams));
-
-    ExpressionAttributeValues[":newValue"] =
-      parseInt(postDetails[0][voteType]) - 1;
-  }
-
-  const updatePostParams = {
-    TableName: "PostsTable",
-    Key: {
-      hashedUrl: postDetails[0].hashedUrl,
-      createdAt: postDetails[0].createdAt
-    },
-    UpdateExpression: "set #name = :newValue",
-    ExpressionAttributeNames: { "#name": voteType },
-    ExpressionAttributeValues: ExpressionAttributeValues
+  const insertParams = {
+    TableName: "VoteMappingTable",
+    Item: {
+      userId,
+      voteType,
+      voteId: id,
+      createdAt: new Date(Date.now()).toISOString(),
+      isDeactivated: "false"
+    }
   };
 
-  promises.push(updateItem(updatePostParams));
+  const deleteParams = {
+    TableName: "VoteMappingTable",
+    Key: {
+      voteId: id,
+      userId
+    }
+  };
+
+  let valuesForUpdatePostOrResponse = {};
+
+  if (previousVotingDetails.length) {
+    // check voteType same or not
+    if (previousVotingDetails[0].voteType === voteType) {
+      // delete vote mapping
+      promises.push(deleteItem(deleteParams));
+
+      // if like or upvote decrease reputation else if downvote increase reputation
+      if (voteType === "like" || voteType === "upVote") {
+        promises.push(
+          decreaseUserReputation({
+            userId: postOrResDetails[0].userId,
+            decreaseBy: 10
+          })
+        );
+      }
+
+      // for downvote we will only increase or decrease reputation by 5
+      else if (voteType === "downVote") {
+        promises.push(
+          increaseUserReputation({
+            userId: postOrResDetails[0].userId,
+            increaseBy: 5
+          })
+        );
+      }
+
+      // based on the voteType adjust post like upvote or downvote
+      valuesForUpdatePostOrResponse[":newValue"] =
+        parseInt(postOrResDetails[0][voteType]) - 1;
+    } else {
+      // update which is equals insert
+      promises.push(putItem(insertParams));
+
+      // if like or upvote increase reputation else decrease reputation
+      if (voteType === "like" || voteType === "upVote") {
+        promises.push(
+          increaseUserReputation({
+            userId: postOrResDetails[0].userId,
+            increaseBy: 10
+          })
+        );
+      }
+
+      // for downvote we will only increase or decrease reputation by 5
+      else if (voteType === "downVote") {
+        promises.push(
+          decreaseUserReputation({
+            userId: postOrResDetails[0].userId,
+            decreaseBy: 5
+          })
+        );
+      }
+
+      // based on the voteType adjust post like upvote or downvote
+      valuesForUpdatePostOrResponse[":newValue"] =
+        parseInt(postOrResDetails[0][voteType]) + 1;
+    }
+  } else {
+    // insert vote mapping
+    promises.push(putItem(insertParams));
+
+    // if like or upvote increase reputation else decrease reputation
+    if (voteType === "like" || voteType === "upVote") {
+      promises.push(
+        increaseUserReputation({
+          userId: postOrResDetails[0].userId,
+          increaseBy: 10
+        })
+      );
+    }
+
+    // for downvote we will only increase or decrease reputation by 5
+    else if (voteType === "downVote") {
+      promises.push(
+        decreaseUserReputation({
+          userId: postOrResDetails[0].userId,
+          decreaseBy: 5
+        })
+      );
+    }
+
+    // based on the voteType adjust post like upvote or downvote
+    valuesForUpdatePostOrResponse[":newValue"] =
+      parseInt(postOrResDetails[0][voteType]) + 1;
+  }
+
+  const updatePostOrResponseParams = {
+    TableName: type === "post" ? "PostsTable" : "ResponsesTable",
+    Key:
+      type === "post"
+        ? {
+            hashedUrl: postOrResDetails[0].hashedUrl,
+            createdAt: postOrResDetails[0].createdAt
+          }
+        : {
+            responseId: postOrResDetails[0].responseId
+          },
+    UpdateExpression: "set #name = :newValue",
+    ExpressionAttributeNames: { "#name": voteType },
+    ExpressionAttributeValues: valuesForUpdatePostOrResponse
+  };
+
+  promises.push(updateItem(updatePostOrResponseParams));
 
   return Promise.all(promises)
-    .then(() => okResponse(`${voteType} : of ${postUrl} has done successfully`))
+    .then(() => okResponse(`${voteType} : of ${id} has done successfully`))
     .catch(err =>
-      internalServerError(err, `unable to to ${voteType} the ${postUrl}`)
+      internalServerError(err, `unable to to ${voteType} the ${id}`)
     );
 }
 
@@ -580,6 +678,94 @@ async function devFeedPublic(event) {
     .catch(err => internalServerError(err));
 }
 
+function tagFeed(event) {
+  console.log("Inside tagPost function", event);
+
+  const errors = customValidator(event, ["tagName"]);
+  if (errors.length)
+    return badRequestResponse("mandatory fields are missing", errors);
+
+  const { tagName, limit, LastEvaluatedKey } = event;
+
+  const params = {
+    TableName: "PostsTable",
+    IndexName: "byIsDeactivated",
+    ProjectionExpression:
+      "#c, #co, #tg, #ti, #lk, #rs, createdAt, downVote,  upVote, hashedUrl,  postType",
+    ExpressionAttributeNames: {
+      "#c": "content",
+      "#co": "coverImage",
+      "#tg": "tag",
+      "#ti": "title",
+      "#lk": "like",
+      "#rs": "responses"
+    },
+    ScanIndexForward: false,
+    FilterExpression: "contains (tags, :value)",
+    KeyConditionExpression: "isDeactivated = :isDeactivated",
+    ExpressionAttributeValues: {
+      ":value": tagName,
+      ":isDeactivated": "false"
+    }
+  };
+
+  if (limit && limit != "false") {
+    params.Limit = limit;
+  }
+  if (LastEvaluatedKey && LastEvaluatedKey != "false") {
+    params.ExclusiveStartKey = LastEvaluatedKey;
+  }
+
+  return queryItemPaginated(params)
+    .then(result => okResponse("fetched result", result))
+    .catch(err => internalServerError(err));
+}
+
+async function devPosts(event) {
+  console.log("Inside devPosts function", event);
+
+  const errors = customValidator(event, ["userName"]);
+  if (errors.length)
+    return badRequestResponse("mandatory fields are missing", errors);
+
+  const { userName, limit, LastEvaluatedKey } = event;
+
+  const user = await getUserByUserName({ userName });
+
+  if (!user.data.length)
+    return badRequestResponse(`user not fround with the userName ${userName}`);
+
+  const params = {
+    TableName: "PostsTable",
+    IndexName: "byUserId",
+    ProjectionExpression:
+      "#c, #co, #tg, #ti, #lk, #rs, createdAt, downVote,  upVote, hashedUrl,  postType",
+    ExpressionAttributeNames: {
+      "#c": "content",
+      "#co": "coverImage",
+      "#tg": "tag",
+      "#ti": "title",
+      "#lk": "like",
+      "#rs": "responses"
+    },
+    ScanIndexForward: false,
+    KeyConditionExpression: "userId = :userId",
+    ExpressionAttributeValues: {
+      ":userId": user.data[0].userId
+    }
+  };
+  if (limit && limit != "false") {
+    params.Limit = limit;
+  }
+  if (LastEvaluatedKey && LastEvaluatedKey != "false") {
+    params.ExclusiveStartKey = LastEvaluatedKey;
+  }
+
+  return queryItemPaginated(params)
+    .then(result => okResponse("fetched result", result))
+    .catch(err => internalServerError(err));
+}
+
 module.exports = {
   createPost,
   getAllPosts,
@@ -589,5 +775,7 @@ module.exports = {
   deletePost,
   votePost,
   devFeed,
-  devFeedPublic
+  devFeedPublic,
+  tagFeed,
+  devPosts
 };
