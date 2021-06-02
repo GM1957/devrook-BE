@@ -204,7 +204,7 @@ async function createUser(event) {
     TableName: "UsersTable",
     Item: {
       userId,
-      userName,
+      userName: userName.split(" ").join(""),
       email,
       name,
       location: location ? location : "Unknown",
@@ -259,8 +259,10 @@ async function updateUser(event) {
   if (event.following) delete event.following;
   if (event.tags) delete event.tags;
 
-  const eventArr = Objects.keys(event);
-  const userArr = Objects.keys(post[0]);
+  if (event.userName) event.userName = event.userName.split(" ").join("");
+
+  const eventArr = Object.keys(event);
+  const userArr = Object.keys(user.data[0]);
 
   eventArr.forEach(item => {
     if (!userArr.includes(item)) delete event[item];

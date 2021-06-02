@@ -2,7 +2,7 @@ const {
   queryItem,
   putItem,
   updateItem,
-  queryItemPaginated
+  queryItemPaginated,
 } = require("../Utils/DBClient");
 
 const uuid = require("uuid");
@@ -10,7 +10,7 @@ const uuid = require("uuid");
 const {
   okResponse,
   internalServerError,
-  badRequestResponse
+  badRequestResponse,
 } = require("../Utils/responseCodes").responseMessages;
 
 const { customValidator } = require("../Utils/customValidator");
@@ -31,8 +31,8 @@ async function createResponse(event) {
     TableName: "PostsTable",
     KeyConditionExpression: "hashedUrl = :hashedUrl",
     ExpressionAttributeValues: {
-      ":hashedUrl": postUrl
-    }
+      ":hashedUrl": postUrl,
+    },
   };
 
   const post = await queryItem(getPostParams);
@@ -53,19 +53,19 @@ async function createResponse(event) {
       downVote: 0,
       totalVotes: 0,
       createdAt: new Date(Date.now()).toISOString(),
-      isDeactivated: "false"
-    }
+      isDeactivated: "false",
+    },
   };
 
   promises.push(putItem(createParams));
 
   const updatePostParams = {
     TableName: "PostsTable",
-    Key: postUrl,
+    Key: { hashedUrl: postUrl, createdAt: post[0].createdAt },
     UpdateExpression: "set responses = :newResponses",
     ExpressionAttributeValues: {
-      ":newResponses": uuid.parse(post[0].responses) + 1
-    }
+      ":newResponses": parseInt(post[0].responses) + 1,
+    },
   };
 
   promises.push(updateItem(updatePostParams));
@@ -74,7 +74,7 @@ async function createResponse(event) {
     .then(() =>
       okResponse("Response hasbeen given successfully", { responseId })
     )
-    .catch(err => internalServerError(err));
+    .catch((err) => internalServerError(err));
 }
 
 function getResponses(event) {
@@ -93,24 +93,24 @@ function getResponses(event) {
     IndexName: "byPostUrlAndUpvote",
     KeyConditionExpression: "postUrl = :postUrl",
     ExpressionAttributeValues: {
-      ":postUrl": postUrl
-    }
+      ":postUrl": postUrl,
+    },
   };
 
   return queryItemPaginated(findParams)
-    .then(async result => {
+    .then(async (result) => {
       if (result.Items.length) {
         const promises = [];
 
-        result.Items.forEach(item => {
+        result.Items.forEach((item) => {
           const params = {
             TableName: "UsersTable",
             KeyConditionExpression: "userId = :userId",
             ProjectionExpression: "userName, profilePicture, #n",
             ExpressionAttributeNames: { "#n": "name" },
             ExpressionAttributeValues: {
-              ":userId": item.userId
-            }
+              ":userId": item.userId,
+            },
           };
 
           promises.push(queryItem(params));
@@ -122,7 +122,7 @@ function getResponses(event) {
 
       return okResponse("fetched items", result);
     })
-    .catch(err => internalServerError(err));
+    .catch((err) => internalServerError(err));
 }
 
 module.exports = { createResponse, getResponses };

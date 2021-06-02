@@ -102,6 +102,7 @@ async function messageHandler(event) {
     const getReceiverConnectionParams = {
       TableName: "WebSocketUserTable",
       IndexName: "byUserId",
+      ScanIndexForward: false,
       KeyConditionExpression: "userId = :userId",
       ExpressionAttributeValues: {
         ":userId": receiverId

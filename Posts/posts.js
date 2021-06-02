@@ -333,7 +333,7 @@ async function deletePost(event) {
 
   const getPostParams = {
     TableName: "PostsTable",
-    IndexName: "byhashedUrlAndUserId",
+    IndexName: "byHasedUrlAndUserId",
     KeyConditionExpression: "hashedUrl = :hashedUrl AND userId = :userId",
     ExpressionAttributeValues: {
       ":hashedUrl": postUrl,
