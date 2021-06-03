@@ -4,6 +4,7 @@ const path = require("path");
 const config = {
   entry: {
     QueryTester: "./QueryTester/index.js",
+    CognitoTriggers: "./CognitoTriggers/index.js",
     Users: "./Users/index.js",
     Tags: "./Tags/index.js",
     S3upload: "./S3upload/index.js",

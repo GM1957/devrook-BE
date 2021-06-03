@@ -12,10 +12,11 @@ provider:
     REGION: ${self:provider.region}
     SERVICE_NAME: "${self:service}-${self:provider.stage}"
     STAGE: "${self:provider.stage, dev}"
-    REDIRECT_URL_AFTER_AUTHENTICATION: ${self:custom.REDIRECT_URL_AFTER_AUTHENTICATION.${opt:stage, dev}}
     COGNITO_USER_POOL_CLIENT: 
       Ref: CognitoUserPoolClient
-    KEYS_URL: !Join ['', ['https://cognito-idp.', '${opt:region, self:provider.region}', '.amazonaws.com/', !Ref CognitoUserPool, '/.well-known/jwks.json']]
+    KEYS_URL: ${self:custom.KEYS_URL}
+    REDIRECT_API: ${self:custom.REDIRECT_API}
+    REDIRECT_URL_AFTER_AUTHENTICATION: ${self:custom.REDIRECT_URL_AFTER_AUTHENTICATION.${opt:stage, dev}}
     s3MainBucket: ${self:custom.s3MainBucket}
   iamRoleStatements: ${file(./Resources/LambdaRole.yml)}
 
@@ -28,15 +29,28 @@ plugins:
 custom:
   userPoolName: "${self:service}-${self:provider.stage}"
   userPoolClientName: "${self:service}-user-pool-client-${self:provider.stage}"
-
+  KEYS_URL: !Join ['', ['https://cognito-idp.', '${opt:region, self:provider.region}', '.amazonaws.com/', !Ref CognitoUserPool, '/.well-known/jwks.json']]
+  REDIRECT_API:
+    {
+      "Fn::Join":
+        [
+          "",
+          [
+            "https://",
+            { "Ref": "ApiGatewayRestApi" },
+            ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}",
+          ],
+        ],
+    }
+  
   REDIRECT_URL_AFTER_AUTHENTICATION:
-    prod: "https://your-domain-name-here.com/"
-    dev: "https://your-domain-name-here.com/"
+    dev: "http://localhost:3000/"
+    prod: "https://devrook.com/"
 
   s3MainBucket: "${self:provider.stage}-${self:service}-main-bucket"
 
 functions:
-  QueryTester: ${file(./Resources/LambdaResources/QueryTester.yml)}
+  CognitoTriggers: ${file(./Resources/LambdaResources/cognitoTriggers.yml)}
   Users: ${file(./Resources/LambdaResources/Users.yml)}
   Tags: ${file(./Resources/LambdaResources/Tags.yml)}
   S3upload: ${file(./Resources/LambdaResources/S3upload.yml)}

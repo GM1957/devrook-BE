@@ -18,10 +18,6 @@ const {
 
 const { customValidator } = require("../Utils/customValidator");
 
-const {
-  expressionValueGeneratorFornIN
-} = require("../Utils/expressionValueGeneratorForIN");
-
 const { cognitoIdentityService } = require("../Utils/cognitoConnection.js");
 
 const { USER_POOL_ID } = process.env;
@@ -181,6 +177,7 @@ async function createUser(event) {
 
   const {
     userId,
+    identities,
     email,
     name,
     userName,
@@ -223,9 +220,20 @@ async function createUser(event) {
     }
   };
 
+  let cognitoId = userId;
+
+  if (identities) {
+    cognitoId = identities.providerName + "_" + identities.userId;
+  }
+
   return putItem(params)
     .then(async () => {
-      await updateCognito({ userId, zoneInfo: "1", profile: userName });
+      await updateCognito({
+        userId: cognitoId,
+        zoneInfo: "1",
+        profile: userName
+      });
+
       return createResponse(
         `user created successfully with userId ${userId} and email address ${email}`
       );

@@ -1,0 +1,32 @@
+handler: CognitoTriggers/index.main
+package:
+  individually: true
+  artifact: "./dist/CognitoTriggers.zip"
+name: CognitoTriggers-${self:provider.stage}
+events:
+    - cognitoUserPool:
+        pool: ${self:custom.userPoolName}
+        trigger: CustomMessage
+        existing: true   
+    - http:
+        path: /redirect
+        method: get
+        cors: true
+        integration: lambda
+        request:
+          passThrough: WHEN_NO_TEMPLATES
+          template:
+            application/json: '{
+                                  "code":"$input.params("code")",
+                                  "username":"$input.params("username")",
+                                  "clientId":"$input.params("clientId")",
+                                  "region":"$input.params("region")",
+                                  "email":"$input.params("email")",
+                                  "eventType": "verification"
+                                }'
+        response:
+          statusCodes:
+            302:
+              pattern: ''
+              headers:
+                location: integration.response.body.location

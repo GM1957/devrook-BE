@@ -97,7 +97,7 @@ async function devSearch(event) {
   }
 
   const containsExpForName = await containsExpresseionGeneratorForOR(
-    "name",
+    "#n",
     containsArr
   );
 
@@ -108,14 +108,9 @@ async function devSearch(event) {
 
   const params = {
     TableName: "UsersTable",
-    ProjectionExpression: "#n, userName, profilePicture, reputation",
+    ProjectionExpression: "#n, userName, profilePicture, reputation, bio",
     ExpressionAttributeNames: {
-      "#c": "content",
-      "#co": "coverImage",
-      "#tg": "tag",
-      "#ti": "title",
-      "#lk": "like",
-      "#rs": "responses"
+      "#n": "name"
     },
     FilterExpression:
       containsExpForName.expression +
