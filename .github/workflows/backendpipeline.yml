@@ -35,36 +35,36 @@ jobs:
       run: sls deploy --stage dev --region ${{ secrets.DEV_AWS_REGION }}
 
 
-name: Production Server Deploy
+# name: Production Server Deploy
 
-on:
-  push:
-    branches: [ production ]
+# on:
+#   push:
+#     branches: [ production ]
 
-jobs:      
-  Deploy-Dev:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '12.x'
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.PROD_AWS_KEY }}
-        aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET }}
-        aws-region: ${{ secrets.PROD_AWS_REGION }}          
-    - name: Installing Node Modules
-      run: |
-        npm cache clean --force
-        rm -rf node_modules
-        npm i
-    - name: Installing Serverless Framework
-      run: npm install -g serverless
-    - name: Code Format Checking
-      run: npm run formatCheck
-    - name: Serverless AWS authentication
-      run: sls config credentials --provider aws --key ${{ secrets.PROD_AWS_KEY }} --secret ${{ secrets.PROD_AWS_SECRET }} --profile ${{ secrets.PROD_PROFILE_NAME }}
-    - name: Deploy Lambda functions
-      run: sls deploy --stage prod --region ${{ secrets.PROD_AWS_REGION }}  
+# jobs:      
+#   Deploy-Dev:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v1
+#     - uses: actions/setup-node@v1
+#       with:
+#         node-version: '12.x'
+#     - name: Configure AWS Credentials
+#       uses: aws-actions/configure-aws-credentials@v1
+#       with:
+#         aws-access-key-id: ${{ secrets.PROD_AWS_KEY }}
+#         aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET }}
+#         aws-region: ${{ secrets.PROD_AWS_REGION }}          
+#     - name: Installing Node Modules
+#       run: |
+#         npm cache clean --force
+#         rm -rf node_modules
+#         npm i
+#     - name: Installing Serverless Framework
+#       run: npm install -g serverless
+#     - name: Code Format Checking
+#       run: npm run formatCheck
+#     - name: Serverless AWS authentication
+#       run: sls config credentials --provider aws --key ${{ secrets.PROD_AWS_KEY }} --secret ${{ secrets.PROD_AWS_SECRET }} --profile ${{ secrets.PROD_PROFILE_NAME }}
+#     - name: Deploy Lambda functions
+#       run: sls deploy --stage prod --region ${{ secrets.PROD_AWS_REGION }}  
