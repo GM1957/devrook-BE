@@ -47,7 +47,7 @@ custom:
   s3MainBucket: "${self:provider.stage}-${self:service}-main-bucket"
 
 functions:
-  CognitoTriggers: ${file(./Resources/LambdaResources/cognitoTriggers.yml)}
+  CognitoTriggers: ${file(./Resources/LambdaResources/CognitoTriggers.yml)}
   Users: ${file(./Resources/LambdaResources/Users.yml)}
   Tags: ${file(./Resources/LambdaResources/Tags.yml)}
   S3upload: ${file(./Resources/LambdaResources/S3upload.yml)}
