@@ -25,7 +25,6 @@
     "serverless-cognito-add-custom-attributes": "^0.3.0",
     "serverless-domain-manager": "^3.3.2",
     "serverless-dotenv-plugin": "^2.4.2",
-    "serverless-middleware": "0.0.10",
     "serverless-offline": "^6.8.0",
     "serverless-plugin-split-stacks": "^1.11.0",
     "serverless-plugin-webpack": "^1.5.1",
