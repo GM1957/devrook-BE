@@ -1,19 +1,25 @@
-name: Development Server Deploy
+name: DevRook-BE Development Server Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
-jobs:      
-  Deploy-Dev:
+jobs:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
       with:
-        node-version: '12.x'
+        node-version: ${{ matrix.node-version }}
+    
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -32,7 +38,11 @@ jobs:
     - name: Serverless AWS authentication
       run: sls config credentials --provider aws --key ${{ secrets.DEV_AWS_KEY }} --secret ${{ secrets.DEV_AWS_SECRET }} --profile ${{ secrets.DEV_PROFILE_NAME }}
     - name: Deploy Lambda functions
-      run: sls deploy --stage dev --region ${{ secrets.DEV_AWS_REGION }}
+      run: |
+        git config --global user.email ${{ secrets.GH_EMAIL }}
+        git config --global user.name ${{ secrets.GH_USERNAME }}
+        git remote set-url origin https://${{ secrets.GH_PERSONAL_TOKEN }}@github.com/${{ secrets.GH_USERNAME }}/devrook-FE.git
+        sls deploy --stage dev --region ${{ secrets.DEV_AWS_REGION }}
 
 
 # name: Production Server Deploy
