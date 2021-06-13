@@ -3,4 +3,5 @@ node_modules
 dist
 test.js
 .DS_STORE
+.DS_Store
 .vscode
