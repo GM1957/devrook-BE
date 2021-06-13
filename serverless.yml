@@ -41,8 +41,8 @@ custom:
   userPoolName: "${self:service}-${self:provider.stage}"
   userPoolClientName: "${self:service}-user-pool-client-${self:provider.stage}"  
   REDIRECT_URL_AFTER_AUTHENTICATION:
-    dev: "http://localhost:3000/"
-    prod: "https://devrook.com/"
+    dev: "http://localhost:3000"
+    prod: "https://www.devrook.com"
 
   s3MainBucket: "${self:provider.stage}-${self:service}-main-bucket"
 

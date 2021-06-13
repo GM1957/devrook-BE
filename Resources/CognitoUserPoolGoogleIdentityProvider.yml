@@ -5,8 +5,8 @@ Properties:
     email: email
     name: name
   ProviderDetails: 
-    client_id: "802573727701-55rfnsc5tk4gu8baa406kb21daaatgaq.apps.googleusercontent.com"
-    client_secret: "qx4ARgfTkO8haHLFKyxAMm0M"
+    client_id: "221796328436-h7p82mg24a919vv4qqf5fe949q3006ak.apps.googleusercontent.com"
+    client_secret: "kbGRaIhT4Hss8UyzpLjOMZT-"
     authorize_scopes: email openid profile
   ProviderType: Google
   UserPoolId:

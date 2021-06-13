@@ -1,12 +1,12 @@
 CallbackURLs:
-  dev: "http://localhost:3000/"
-  prod: "https://devrook.com/"
+  dev: "http://localhost:3000"
+  prod: "https://www.devrook.com"
 LogoutURLs:
-  dev: "http://localhost:3000/"
-  prod: "https://devrook.com/"
+  dev: "http://localhost:3000"
+  prod: "https://www.devrook.com"
 DefaultRedirectURI:
-  dev: "http://localhost:3000/"
-  prod: "https://devrook.com/"
+  dev: "http://localhost:3000"
+  prod: "https://www.devrook.com"
 EMAILING_REGION:
   dev: "us-west-2"
   prod: "ap-south-1"
